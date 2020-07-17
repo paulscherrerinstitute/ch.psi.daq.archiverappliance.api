@@ -1,0 +1,161 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection).
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+POST {{host}}/channels
+Content-Type: application/json
+
+{"reload": "false"}
+
+###
+POST {{host}}/channels
+Content-Type: application/json
+
+{
+  "reload": false,
+  "regex":  "S10-CPCL.*"
+}
+###
+
+GET {{host}}/params/backends
+
+###
+
+GET {{host}}/params/aggregations
+
+###
+
+GET {{host}}/params/configfields
+
+###
+
+GET {{host}}/params/eventfields
+
+###
+
+GET {{host}}/params/ordering
+
+###
+
+GET {{host}}/params/responseformat
+
+###
+
+GET {{host}}/params/compression
+
+###
+
+POST {{host}}/channels
+Content-Type: application/json
+
+{
+  "regex": ".*"
+}
+
+### NOT YET SUPPORTED
+
+GET {{host}}/params/backends/byid
+Content-Type: application/json
+
+###
+
+GET {{host}}/params/queryfields
+Content-Type: application/json
+
+###
+
+GET {{host}}/channels/hash
+
+###
+
+POST {{host}}/channels/config
+Content-Type: application/json
+
+{"regex":"S10-CVME-DBPM143:SLOT4-SFP3-EVR-MGT-RESET"}
+
+###
+
+# Response
+# [{"backend":"sf-archiverappliance","channels":[{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-3-3"},{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-5"}]}]
+
+###
+
+POST {{host}}/query
+Content-Type: application/json
+
+{
+  "range":{
+    "startDate":"2019-07-08T01:00:00.000Z",
+    "endDate":"2019-07-09T01:00:00.000Z"
+  },
+  "channels":[
+    {
+      "name": "SINEG01-DWCM170:TIME",
+      "backend":"sf-archiverappliance"
+    },
+    {
+      "name": "SINLH01-DBAM010:EOM1_T1",
+      "backend":"sf-archiverappliance"
+    },
+    {
+      "name": "S10BC01-DBAM070:EOM1_T1",
+      "backend":"sf-archiverappliance"
+    }
+  ]
+}
+
+###
+
+POST {{host}}/query
+Content-Type: application/json
+
+{
+  "channels": ["SLG-LSCP3-FNS:CH7:VAL_GET"],
+  "range": {
+    "startDate": "2019-10-03T10:00:00.000000000Z",
+    "endDate": "2019-10-03T10:05:00.000000000Z"
+  }
+}
+
+###
+
+# test of a string channel that caused some troubles some time ago
+POST {{host}}/query
+Content-Type: application/json
+
+{
+  "range":{
+    "startDate":"2019-07-29T06:00:00.000Z",
+    "endDate":"2019-08-02T06:00:00.000Z"
+  },
+  "channels":[
+    {
+      "name": "S30CB04-RILK:STR-DESC-CURRENT-LOG",
+      "backend":"sf-archiverappliance"
+    }
+  ]
+}
+
+###
+# with expanded channel list
+POST {{host}}/query
+Content-Type: application/json
+
+{
+  "range":{
+    "startDate":"2019-11-14T10:15:30.786Z",
+    "endDate":"2019-11-14T10:16:30.786Z"
+  },
+  "channels":[
+    {
+      "name": "S10CB01-RBOC-DCP10:FOR-AMPLT",
+      "backend":"sf-databuffer"
+    }
+  ]
+}
+
+###
+

@@ -1,0 +1,20 @@
+
+# To be able to test this you first have to establish a VPN to the machine network like this:
+# sshuttle -r sflca 172.26.120.0/24 172.26.40.0/24
+
+# Get Channel metadata:
+GET http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getPVTypeInfo?pv=STSRD01-TSPL-OMO2:SPERIOD_LOCKED
+
+###
+
+GET http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getPVDetails?pv=STSRD01-TSPL-OMO2:SPERIOD_LOCKED
+
+###
+
+
+GET http://sf-archapp-05.psi.ch:17668/retrieval/data/getData.json?pv=S10CB01-RACC100-TUN10:SIG-AMPLT-MAX&from=2020-07-06T09:02:34.336Z&to=2020-07-06T09:12:34.336Z
+
+###
+#GET http://sf-archapp-05.psi.ch:17668/retrieval/data/getData.json?pv={pv}&from={start}&to={end}
+# Date format for start/end new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date(startTime.getMillis()))
+#2020-07-06 11:12:34.336

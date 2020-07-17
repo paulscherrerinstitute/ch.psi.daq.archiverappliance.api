@@ -1,0 +1,104 @@
+package ch.psi.daq.archiverappliance.api.api.v1;
+
+import ch.psi.daq.archiverappliance.api.ArchiverConfigurationManager;
+import ch.psi.daq.archiverappliance.api.api.v1.config.RequestChannels;
+
+import ch.psi.daq.archiverappliance.api.api.v1.config.ResponseChannelConfigurations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+
+@RestController
+public class ConfigController {
+    private static final Logger logger = LoggerFactory.getLogger(ConfigController.class);
+
+//    private final String API_PREFIX = "/api/v1";
+    private ArchiverConfigurationManager archiverManager;
+
+    public ConfigController(ArchiverConfigurationManager archiverManager){
+        this.archiverManager = archiverManager;
+    }
+
+
+    @RequestMapping(value="/channels", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+    public Mono<List<String>> getChannels(@RequestBody RequestChannels request){
+
+        // backend and ordering are not supported by this request - parameters are simply ignored
+
+        Flux<String> flux = archiverManager.getChannels(request.isReload());
+        if(request.getRegex() != ".*") {
+            final Pattern pattern = Pattern.compile(request.getRegex());
+            flux = flux.filter(channel -> pattern.matcher(channel).find());
+        }
+        return flux.collectList();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value="/channels/config", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
+    public Flux<ResponseChannelConfigurations> getChannelConfigurations(@RequestBody RequestChannels request){
+
+
+        return archiverManager.getChannelConfigurations(request.getRegex())
+                .collectList()
+                .map(l -> {
+                    ResponseChannelConfigurations response = new ResponseChannelConfigurations();
+                    response.setChannels(l);
+                    response.setBackend("sf-archiverappliance");
+                    return response;
+                })
+                .flux();
+
+        // [{"backend":"sf-archiverappliance","channels":[{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-3-3"},{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-5"}]}]
+    }
+
+
+
+    // Backward compatibility functions only
+
+    @RequestMapping(value="/params/backends", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getBackends(){
+        return Arrays.asList("sf-archiverappliance");
+    }
+
+    @RequestMapping(value="/params/aggregations", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getAggregations() {
+        return Arrays.asList("mean", "min", "max", "sum", "count", "variance", "stddev", "skewness", "kurtosis", "typed");
+    }
+
+
+    @RequestMapping(value="/params/configfields", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getConfigFields(){
+        return Arrays.asList("name", "backend", "pulseId", "globalSeconds", "globalDate", "globalMillis", "type", "shape", "source", "precision", "unit", "description");
+    }
+
+    @RequestMapping(value="/params/eventfields", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getEventFields(){
+        return Arrays.asList("channel", "backend", "pulseId", "globalTime", "globalSeconds", "globalDate", "globalMillis", "iocTime", "iocSeconds", "iocDate", "iocMillis", "shape", "type", "eventCount", "value");
+    }
+
+    @RequestMapping(value="/params/ordering", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getOrdering() {
+        return Arrays.asList("asc", "desc", "none");
+    }
+
+    @RequestMapping(value="/params/responseformat", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getResponseFormat(){
+//        return Arrays.asList(  "json", "csv", "smile", "rawevent");
+        return Arrays.asList(  "json");
+    }
+
+    @RequestMapping(value="/params/compression", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public List<String> getCompression(){
+//        return Arrays.asList("none", "gzip");
+        return Arrays.asList("none");
+    }
+
+}
