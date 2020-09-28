@@ -6,11 +6,16 @@
 GET http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getPVTypeInfo?pv=STSRD01-TSPL-OMO2:SPERIOD_LOCKED
 
 ###
+# Get details of a specific channel:
 
 GET http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getPVDetails?pv=STSRD01-TSPL-OMO2:SPERIOD_LOCKED
 
 ###
 
+GET http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getPVStatus?pv=STSRD01-*
+
+###
+# Get data for a specific channel
 
 GET http://sf-archapp-05.psi.ch:17668/retrieval/data/getData.json?pv=S10CB01-RACC100-TUN10:SIG-AMPLT-MAX&from=2020-07-06T09:02:34.336Z&to=2020-07-06T09:12:34.336Z
 

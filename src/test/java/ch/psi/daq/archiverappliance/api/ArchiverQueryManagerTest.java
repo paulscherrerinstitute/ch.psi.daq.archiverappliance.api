@@ -1,6 +1,5 @@
-package ch.psi.daq.archiverappliance.api.api.v1;
+package ch.psi.daq.archiverappliance.api;
 
-import ch.psi.daq.archiverappliance.api.ArchiverQueryManager;
 import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResult;
 import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResultEvent;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package ch.psi.daq.archiverappliance.api.api.v1;
+package ch.psi.daq.archiverappliance.api;
 
 import ch.psi.daq.archiverappliance.api.data.ArchiverChannelConfiguration;
 import ch.psi.daq.archiverappliance.api.ArchiverConfigurationManager;
