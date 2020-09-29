@@ -7,6 +7,7 @@ import ch.psi.daq.archiverappliance.api.api.v1.config.ResponseChannelConfigurati
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -16,15 +17,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+@CrossOrigin
 @RestController
 public class ConfigController {
     private static final Logger logger = LoggerFactory.getLogger(ConfigController.class);
 
-//    private final String API_PREFIX = "/api/v1";
     private ArchiverConfigurationManager archiverManager;
+    private String backendId;
 
-    public ConfigController(ArchiverConfigurationManager archiverManager){
+    public ConfigController(ArchiverConfigurationManager archiverManager, @Value("${backend.id}") String backendId){
         this.archiverManager = archiverManager;
+        this.backendId = backendId;
     }
 
 
@@ -41,7 +44,6 @@ public class ConfigController {
         return flux.collectList();
     }
 
-    @CrossOrigin
     @RequestMapping(value="/channels/config", method=RequestMethod.POST, produces=MediaType.APPLICATION_JSON_VALUE)
     public Flux<ResponseChannelConfigurations> getChannelConfigurations(@RequestBody RequestChannels request){
 
@@ -51,28 +53,24 @@ public class ConfigController {
                 .map(l -> {
                     ResponseChannelConfigurations response = new ResponseChannelConfigurations();
                     response.setChannels(l);
-                    response.setBackend("sf-archiverappliance");
+                    response.setBackend(backendId);
                     return response;
                 })
                 .flux();
-
-        // [{"backend":"sf-archiverappliance","channels":[{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-3-3"},{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-5"}]}]
     }
-
 
 
     // Backward compatibility functions only
 
     @RequestMapping(value="/params/backends", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
     public List<String> getBackends(){
-        return Arrays.asList("sf-archiverappliance");
+        return Arrays.asList(backendId);
     }
 
     @RequestMapping(value="/params/aggregations", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
     public List<String> getAggregations() {
         return Arrays.asList("mean", "min", "max", "sum", "count", "variance", "stddev", "skewness", "kurtosis", "typed");
     }
-
 
     @RequestMapping(value="/params/configfields", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
     public List<String> getConfigFields(){
@@ -91,14 +89,11 @@ public class ConfigController {
 
     @RequestMapping(value="/params/responseformat", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
     public List<String> getResponseFormat(){
-//        return Arrays.asList(  "json", "csv", "smile", "rawevent");
         return Arrays.asList(  "json");
     }
 
     @RequestMapping(value="/params/compression", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
     public List<String> getCompression(){
-//        return Arrays.asList("none", "gzip");
         return Arrays.asList("none");
     }
-
 }

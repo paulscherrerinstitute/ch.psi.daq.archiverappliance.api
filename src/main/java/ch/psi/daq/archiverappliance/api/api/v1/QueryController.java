@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 
+@CrossOrigin
 @RestController
 public class QueryController {
     private static final Logger logger = LoggerFactory.getLogger(QueryController.class);
@@ -25,7 +26,6 @@ public class QueryController {
     }
 
 
-    @CrossOrigin
     @RequestMapping(value = "/query", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<ChannelResult> query(@RequestBody Query request) {
 

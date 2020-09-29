@@ -8,7 +8,23 @@
 POST {{host}}/channels
 Content-Type: application/json
 
-{"reload": "false"}
+{"reload": true}
+
+###
+
+POST {{host}}/channels
+Content-Type: application/json
+
+{"reload": false}
+
+###
+
+POST {{host}}/channels
+Content-Type: application/json
+
+{
+  "regex": ".*"
+}
 
 ###
 POST {{host}}/channels
@@ -46,40 +62,40 @@ GET {{host}}/params/responseformat
 
 GET {{host}}/params/compression
 
-###
-
-POST {{host}}/channels
-Content-Type: application/json
-
-{
-  "regex": ".*"
-}
-
-### NOT YET SUPPORTED
-
-GET {{host}}/params/backends/byid
-Content-Type: application/json
-
-###
-
-GET {{host}}/params/queryfields
-Content-Type: application/json
+#### NOT YET SUPPORTED
+#
+#GET {{host}}/params/backends/byid
+#Content-Type: application/json
+#
+####
+#
+#GET {{host}}/params/queryfields
+#Content-Type: application/json
+#
+####
+#
+#GET {{host}}/channels/hash
 
 ###
-
-GET {{host}}/channels/hash
-
-###
+# Response: [{"backend":"sf-archiverappliance","channels":[{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-3-3"}]}]
 
 POST {{host}}/channels/config
 Content-Type: application/json
 
-{"regex":"S10-CVME-DBPM143:SLOT4-SFP3-EVR-MGT-RESET"}
+{"regex":"CR0808:CURRENT-3-3"}
 
 ###
 
-# Response
-# [{"backend":"sf-archiverappliance","channels":[{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-3-3"},{"source":"sf-cagw-arch.psi.ch","backend":"sf-archiverappliance","unit":"A","type":"float64","shape":[1],"name":"CR0808:CURRENT-5"}]}]
+POST {{host}}/query
+Content-Type: application/json
+
+{
+  "channels": ["SLG-LSCP3-FNS:CH7:VAL_GET"],
+  "range": {
+    "startDate": "2019-10-03T10:00:00.000000000Z",
+    "endDate": "2019-10-03T10:05:00.000000000Z"
+  }
+}
 
 ###
 
@@ -105,19 +121,6 @@ Content-Type: application/json
       "backend":"sf-archiverappliance"
     }
   ]
-}
-
-###
-
-POST {{host}}/query
-Content-Type: application/json
-
-{
-  "channels": ["SLG-LSCP3-FNS:CH7:VAL_GET"],
-  "range": {
-    "startDate": "2019-10-03T10:00:00.000000000Z",
-    "endDate": "2019-10-03T10:05:00.000000000Z"
-  }
 }
 
 ###

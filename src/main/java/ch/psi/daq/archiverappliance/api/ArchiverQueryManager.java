@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -31,12 +30,19 @@ public class ArchiverQueryManager {
     private String queryUrl;
     private ObjectMapper objectMapper;
 
-    public ArchiverQueryManager(@Value("server.name") String serverName, ObjectMapper objectMapper){
+    public ArchiverQueryManager(@Value("${server.name}") String serverName, ObjectMapper objectMapper){
         this.queryUrl = "http://"+serverName+":17668/retrieval/data/getData.json?pv={pv}&from={start}&to={end}";
 
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Query data for a single channel in one go
+     * @param channelName
+     * @param start
+     * @param end
+     * @return
+     */
     public ArchiverQueryResult query(String channelName, Instant start, Instant end){
         return WebClient.builder()
                 .build()
@@ -49,7 +55,10 @@ public class ArchiverQueryManager {
     }
 
     /**
-     * Note The archiver usually returns one entry before the actual query range!
+     * Query data for a single channel and provide the incoming data as Flux
+     * as it comes in.
+     *
+     * Note The archiverappliance usually returns one entry before the actual query range!
      * TODO need to be filtered
      *
      * @param channelName
@@ -72,16 +81,16 @@ public class ArchiverQueryManager {
                 .uri(queryUrl, channelName, start, end)
                 .exchange()
                 .filter(r -> {
+                    // Only continue if the http status code reports successful execution of the request
                     if(r.statusCode().is2xxSuccessful()){
                         return true;
                     }
                     else{
-                        logger.warn("Unsuccessful data retrieval from archiver");
+                        logger.warn("Unsuccessful data retrieval from archiverappliance");
                         logger.warn(r.statusCode().getReasonPhrase());
                         return false;
                     }
                 })
-//                .filter(r -> r.statusCode().is2xxSuccessful()) // Only continue if the status code was successful
                 .flatMapMany(clientResp -> Jackson2Tokenizer.tokenize(
                         clientResp.body(BodyExtractors.toDataBuffers()), objectMapper.getFactory(), false))
                 .flatMapIterable(tokenBuffer -> {
@@ -144,6 +153,5 @@ public class ArchiverQueryManager {
                     return null;
                 })
                 .filter(event -> event !=null);
-
     }
 }

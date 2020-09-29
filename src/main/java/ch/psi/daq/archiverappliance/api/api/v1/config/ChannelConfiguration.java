@@ -19,7 +19,7 @@ public class ChannelConfiguration {
     private int[] shape;
     private int modulo;
     private int offset;
-    private String backend;
+//    private String backend;
     private String source;
 
     public String getName() {
@@ -70,13 +70,13 @@ public class ChannelConfiguration {
         this.offset = offset;
     }
 
-    public String getBackend() {
-        return backend;
-    }
-
-    public void setBackend(String backend) {
-        this.backend = backend;
-    }
+//    public String getBackend() {
+//        return backend;
+//    }
+//
+//    public void setBackend(String backend) {
+//        this.backend = backend;
+//    }
 
     public String getSource() {
         return source;

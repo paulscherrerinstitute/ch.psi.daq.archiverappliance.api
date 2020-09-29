@@ -1,7 +1,6 @@
 package ch.psi.daq.archiverappliance.api;
 
 import ch.psi.daq.archiverappliance.api.data.ArchiverChannelConfiguration;
-import ch.psi.daq.archiverappliance.api.ArchiverConfigurationManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ public class ArchiverConfigurationManagerTest {
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration("CR0808:CURRENT-3-3");
 
         // See whether ISO characters are correctly translated
-        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration("SGE-EDRPS01-DDA0302:DOSE-MEAN-R").block();
+        ArchiverChannelConfiguration configuration = manager.getChannelConfigurationFromArchiver("SGE-EDRPS01-DDA0302:DOSE-MEAN-R").block();
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration(".*");
         System.out.println(configuration.getName());
         System.out.println(configuration.getUnit());

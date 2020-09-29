@@ -35,13 +35,12 @@ public class ArchiverConfigurationManager {
 
     private String serverName;
     private String channelsFileName = "channels.json";
-
-    private Flux<String> channelsFlux;
+    private String channelsConfigurationsFileName = "channel_configurations.json";
 
     private ObjectMapper mapper;
     private WebClient webClient;
 
-    public ArchiverConfigurationManager(@Value("server.name") String serverName, ObjectMapper mapper){
+    public ArchiverConfigurationManager(@Value("${server.name}") String serverName, ObjectMapper mapper) {
         this.serverName = serverName;
         this.mapper = mapper;
 
@@ -65,20 +64,32 @@ public class ArchiverConfigurationManager {
 
     }
 
-    public Flux<String> getChannels(boolean reload){
-        if(reload || channelsFlux == null) {
-            try {
-                List<String> channels = mapper.readValue(Paths.get(channelsFileName).toFile(), new TypeReference<>(){});
-                channelsFlux = Flux.fromStream(channels.stream());
-            } catch (IOException e) {
-                logger.error("Unable to read channel file");
-                Flux.fromStream(new ArrayList<String>().stream());
-            }
-//            return getChannelsFromArchiver();
+    /**
+     * Get all channels from a local cache file of from the archiverappliance
+     * @param reload    Reload channel list from the archiverappliance
+     * @return  Flux of channel names
+     */
+    public Flux<String> getChannels(boolean reload) {
+        if (reload) {
+            fetchChannels().block();
         }
+        Flux<String> channelsFlux;
+        try {
+            List<String> channels = mapper.readValue(Paths.get(channelsFileName).toFile(), new TypeReference<>() {
+            });
+            channelsFlux = Flux.fromStream(channels.stream());
+        } catch (IOException e) {
+            logger.error("Unable to read channel file");
+            channelsFlux = Flux.fromStream(new ArrayList<String>().stream());
+        }
+
         return channelsFlux;
     }
 
+    /**
+     * Get the channel list from the archiverappliance
+     * @return Flux of channel names
+     */
     public Flux<String> getChannelsFromArchiver() {
         ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
                 .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(-1))
@@ -88,7 +99,7 @@ public class ArchiverConfigurationManager {
                 .exchangeStrategies(exchangeStrategies) // we need to increase the buffer size for the archiver request
                 .build()
                 .get()
-                .uri("http://"+serverName+":17665/mgmt/bpl/getAllPVs?pv=*&limit=-1")
+                .uri("http://" + serverName + ":17665/mgmt/bpl/getAllPVs?pv=*&limit=-1")
 //                    .accept(MediaType.APPLICATION_JSON)
 //                    .acceptCharset(Charset.forName("ISO-8859-1"))
                 .retrieve()
@@ -96,7 +107,8 @@ public class ArchiverConfigurationManager {
                 .bodyToMono(String.class)
                 .map(v -> {
                     try {
-                        List<String> list = mapper.readValue(v, new TypeReference<>(){});
+                        List<String> list = mapper.readValue(v, new TypeReference<>() {
+                        });
                         return list;
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
@@ -108,35 +120,58 @@ public class ArchiverConfigurationManager {
                 .cache();
     }
 
-    public Flux<ChannelConfiguration> getChannelConfigurations(String regexPattern){
+    /**
+     * Fetch the channels from the archiverappliance and save them into a local cache file
+     * @return  Mono indicating whether the fetch was successful
+     */
+    public Mono<Boolean> fetchChannels() {
+        return getChannelsFromArchiver().collectList().map(channelList -> {
+            try {
+                mapper.writeValue(Paths.get(channelsFileName).toFile(), channelList);
+            } catch (IOException e) {
+                logger.error("Unable to write channels file", e);
+                return false;
+            }
+            return true;
+        });
+    }
+
+    /**
+     * Get the configuration of all channels matching the specified regex pattern
+     * from the archiverappliance
+     *
+     * @param regexPattern channel pattern
+     * @return Flux of configurations
+     */
+    public Flux<ChannelConfiguration> getChannelConfigurations(String regexPattern) {
         Predicate<String> channelFilter = x -> true;
-        if(regexPattern != ".*"){
+        if (regexPattern != ".*") {
             channelFilter = x -> x.matches(regexPattern);
         }
 
         return getChannels(false)
                 .filter(channelFilter)
                 .delayElements(Duration.ofMillis(1))
-                .flatMap(channel -> getChannelConfiguration(channel))
-                .limitRequest(100) // TODO remove !!!!
+                .flatMap(channel -> getChannelConfigurationFromArchiver(channel))
+//                .limitRequest(100) // For testing purposes limit the number of channel
                 .filter(m -> m != null)
                 .map(config -> mapArchiverChannelConfigurationToChannelConfiguration(config));
     }
 
     /**
-     * Get the configuration of a single archiver channel
+     * Get the configuration of a single channel from the archiverappliance
+     *
      * @param channelName
-     * @return  Configuration of the archiver channel, null if configuration cannot be retrieved from the server
+     * @return Configuration of the channel, null if configuration cannot be retrieved from the server
      */
-    public Mono<ArchiverChannelConfiguration> getChannelConfiguration(String channelName){
+    public Mono<ArchiverChannelConfiguration> getChannelConfigurationFromArchiver(String channelName) {
         Mono<ArchiverChannelConfiguration> configuration = null;
 
         try {
             configuration = webClient
                     .get()
-                    .uri("http://"+serverName+":17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
+                    .uri("http://" + serverName + ":17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
                     .retrieve()
-//                    .bodyToMono(ArchiverChannelConfiguration.class)
                     .bodyToMono(String.class)
                     .map(v -> {
                         try {
@@ -146,32 +181,21 @@ public class ArchiverConfigurationManager {
                         }
                         return null;
                     });
-
-//            configuration = webClient
-//                    .get()
-//                    .uri("http://"+serverName+":17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
-//                    .exchange()
-//                    .flatMap(response -> response.bodyToMono(ByteArrayResource.class))
-//                    .map(byteArrayResource -> {
-//                        try (final InputStreamReader reader = new InputStreamReader(byteArrayResource.getInputStream(), StandardCharsets.UTF_8)) {
-//                            return mapper.readValue(reader, ArchiverChannelConfiguration.class);
-//                        } catch (final Throwable thrw) {
-//                            logger.warn("Could not parse ArchiverApplianceChannelConfiguration of '{}'.", channelName);
-//                            // null is not allowed -> what is the recommended pattern
-//                            return null;
-//                        }
-//                    });
-        }
-        catch(WebClientResponseException e){
+        } catch (WebClientResponseException e) {
             logger.warn("Unable to retrieve configuration for channel {} - {}: {}", channelName, e.getRawStatusCode(), e.getStatusText());
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             logger.warn("Unable to retrieve configuration for channel {}: {}", channelName, e.getMessage());
         }
         return configuration;
     }
 
-    private ChannelConfiguration mapArchiverChannelConfigurationToChannelConfiguration(ArchiverChannelConfiguration config){
+    /**
+     * Map the channel configuration object returned by the archiverappliance to the
+     * data API configuration object.
+     * @param config
+     * @return
+     */
+    private ChannelConfiguration mapArchiverChannelConfigurationToChannelConfiguration(ArchiverChannelConfiguration config) {
         ChannelConfiguration configuration = new ChannelConfiguration();
         configuration.setName(config.getName());
         configuration.setType(config.getType());
@@ -181,24 +205,18 @@ public class ArchiverConfigurationManager {
         return configuration;
     }
 
-    public Mono<Boolean>  fetchChannelConfigurations(){
-        return getChannelConfigurations(".*").collectList().map( channelList -> {
+    /**
+     * Fetch channel configurations from the archiverappliance and write them into a
+     * local cache file
+     *
+     * @return Mono indicating whether the fetch was successful
+     */
+    public Mono<Boolean> fetchChannelConfigurations() {
+        return getChannelConfigurations(".*").collectList().map(channelList -> {
             try {
-                mapper.writeValue(Paths.get("channel_configurations.json").toFile(), channelList);
+                mapper.writeValue(Paths.get(channelsConfigurationsFileName).toFile(), channelList);
             } catch (IOException e) {
                 logger.error("Unable to write channels configuration file", e);
-                return false;
-            }
-            return true;
-        });
-    }
-
-    public Mono<Boolean> fetchChannels(){
-        return getChannelsFromArchiver().collectList().map( channelList -> {
-            try {
-                mapper.writeValue(Paths.get(channelsFileName).toFile(), channelList);
-            } catch (IOException e) {
-                logger.error("Unable to write channels file", e);
                 return false;
             }
             return true;
