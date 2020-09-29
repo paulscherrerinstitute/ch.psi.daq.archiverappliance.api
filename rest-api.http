@@ -86,6 +86,13 @@ Content-Type: application/json
 
 ###
 
+POST {{host}}/channels/config
+Content-Type: application/json
+
+{"regex":".*"}
+
+###
+
 POST {{host}}/query
 Content-Type: application/json
 
