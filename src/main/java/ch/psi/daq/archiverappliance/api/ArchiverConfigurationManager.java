@@ -10,6 +10,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -32,15 +33,16 @@ public class ArchiverConfigurationManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ArchiverConfigurationManager.class);
 
+    private String serverName;
     private String channelsFileName = "channels.json";
 
     private Flux<String> channelsFlux;
 
     private ObjectMapper mapper;
-
     private WebClient webClient;
 
-    public ArchiverConfigurationManager(ObjectMapper mapper){
+    public ArchiverConfigurationManager(@Value("server.name") String serverName, ObjectMapper mapper){
+        this.serverName = serverName;
         this.mapper = mapper;
 
         // This documentation might be useful:
@@ -86,7 +88,7 @@ public class ArchiverConfigurationManager {
                 .exchangeStrategies(exchangeStrategies) // we need to increase the buffer size for the archiver request
                 .build()
                 .get()
-                .uri("http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getAllPVs?pv=*&limit=-1")
+                .uri("http://"+serverName+":17665/mgmt/bpl/getAllPVs?pv=*&limit=-1")
 //                    .accept(MediaType.APPLICATION_JSON)
 //                    .acceptCharset(Charset.forName("ISO-8859-1"))
                 .retrieve()
@@ -132,7 +134,7 @@ public class ArchiverConfigurationManager {
         try {
             configuration = webClient
                     .get()
-                    .uri("http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
+                    .uri("http://"+serverName+":17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
                     .retrieve()
 //                    .bodyToMono(ArchiverChannelConfiguration.class)
                     .bodyToMono(String.class)
@@ -147,7 +149,7 @@ public class ArchiverConfigurationManager {
 
 //            configuration = webClient
 //                    .get()
-//                    .uri("http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
+//                    .uri("http://"+serverName+":17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
 //                    .exchange()
 //                    .flatMap(response -> response.bodyToMono(ByteArrayResource.class))
 //                    .map(byteArrayResource -> {

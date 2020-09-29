@@ -18,7 +18,9 @@ public class ArchiverConfigurationManagerTest {
 
     @Test
     public void getChannelConfiguration() {
-        ArchiverConfigurationManager manager = new ArchiverConfigurationManager(Jackson2ObjectMapperBuilder.json().build());
+        ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
+                "sf-archapp-05.psi.ch",
+                Jackson2ObjectMapperBuilder.json().build());
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration("S10-CPPS-DALA01:CH2READ");
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration("CR0808:CURRENT-3-3");
 
@@ -32,19 +34,25 @@ public class ArchiverConfigurationManagerTest {
 
     @Test
     public void fetchChannelConfigurations() {
-        ArchiverConfigurationManager manager = new ArchiverConfigurationManager(Jackson2ObjectMapperBuilder.json().build());
+        ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
+                "sf-archapp-05.psi.ch",
+                Jackson2ObjectMapperBuilder.json().build());
         manager.fetchChannelConfigurations().block();
     }
 
     @Test
     public void fetchChannels() {
-        ArchiverConfigurationManager manager = new ArchiverConfigurationManager(Jackson2ObjectMapperBuilder.json().build());
+        ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
+                "sf-archapp-05.psi.ch",
+                Jackson2ObjectMapperBuilder.json().build());
         assertTrue(manager.fetchChannels().block());
     }
 
     @Test
     void getChannels() {
-        ArchiverConfigurationManager manager = new ArchiverConfigurationManager(Jackson2ObjectMapperBuilder.json().build());
+        ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
+                "sf-archapp-05.psi.ch",
+                Jackson2ObjectMapperBuilder.json().build());
         List<String> channels = manager.getChannels(true).collectList().block();
         System.out.println(channels);
     }

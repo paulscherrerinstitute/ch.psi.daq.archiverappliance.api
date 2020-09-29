@@ -5,6 +5,7 @@ import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResultEvent;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import reactor.core.publisher.Flux;
 
 import java.time.Instant;
@@ -15,7 +16,9 @@ public class ArchiverQueryManagerTest {
 
     @Test
     public void query() {
-        ArchiverQueryManager manager = new ArchiverQueryManager();
+        ArchiverQueryManager manager = new ArchiverQueryManager(
+                "sf-archapp-05.psi.ch",
+                Jackson2ObjectMapperBuilder.json().build());
 
         ArchiverQueryResult result = manager.query(
                 "S10CB01-RACC100-TUN10:SIG-AMPLT-MAX",
@@ -27,7 +30,9 @@ public class ArchiverQueryManagerTest {
 
     @Test
     public void queryStream() throws InterruptedException {
-        ArchiverQueryManager manager = new ArchiverQueryManager();
+        ArchiverQueryManager manager = new ArchiverQueryManager(
+                "sf-archapp-05.psi.ch",
+                Jackson2ObjectMapperBuilder.json().build());
 
         Flux<ArchiverQueryResultEvent> result = manager.queryStream(
                 "S10CB01-RACC100-TUN10:SIG-AMPLT-MAX",

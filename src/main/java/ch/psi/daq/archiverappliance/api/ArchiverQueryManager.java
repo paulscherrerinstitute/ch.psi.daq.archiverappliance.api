@@ -2,12 +2,14 @@ package ch.psi.daq.archiverappliance.api;
 
 import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResult;
 import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResultEvent;
+import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResultList;
 import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResultMeta;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyExtractors;
@@ -25,20 +27,25 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ArchiverQueryManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ArchiverQueryManager.class);
-    private final String QUERY_URL = "http://sf-archapp-05.psi.ch:17668/retrieval/data/getData.json?pv={pv}&from={start}&to={end}";
 
-    // TODO remove
-    private ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
+    private String queryUrl;
+    private ObjectMapper objectMapper;
+
+    public ArchiverQueryManager(@Value("server.name") String serverName, ObjectMapper objectMapper){
+        this.queryUrl = "http://"+serverName+":17668/retrieval/data/getData.json?pv={pv}&from={start}&to={end}";
+
+        this.objectMapper = objectMapper;
+    }
 
     public ArchiverQueryResult query(String channelName, Instant start, Instant end){
         return WebClient.builder()
                 .build()
                 .get()
-                .uri(QUERY_URL, channelName, start, end)
+                .uri(queryUrl, channelName, start, end)
                 .retrieve()
-                .bodyToMono(ArchiverQueryResult.class)
-                .block();
-//        return r.get(0); // Return the first result of the list (as we only query for one channel)
+                .bodyToMono(ArchiverQueryResultList.class)
+                .block()
+                .get(0); // Return the first result of the list (as we only query for one channel)
     }
 
     /**
@@ -57,12 +64,12 @@ public class ArchiverQueryManager {
         final AtomicReference<ArchiverQueryResultMeta> metaRef = new AtomicReference<>();
         final AtomicLong errorCounter = new AtomicLong();
 
-        logger.info("Issue query: {}", new DefaultUriBuilderFactory().expand(QUERY_URL, channelName, start, end));
+        logger.info("Issue query: {}", new DefaultUriBuilderFactory().expand(queryUrl, channelName, start, end));
 
         return WebClient.builder()
                 .build()
                 .get()
-                .uri(QUERY_URL, channelName, start, end)
+                .uri(queryUrl, channelName, start, end)
                 .exchange()
                 .filter(r -> {
                     if(r.statusCode().is2xxSuccessful()){
@@ -125,12 +132,12 @@ public class ArchiverQueryManager {
                         if (errorCount % 50000 == 0) {
                             logger.warn("Could not parse ArchiverApplianceEvent. Error count '{}' for query '{}'.",
                                     errorCount,
-                                    new DefaultUriBuilderFactory().expand(QUERY_URL, channelName, start, end));
+                                    new DefaultUriBuilderFactory().expand(queryUrl, channelName, start, end));
                         } else if (errorCount % 1000 == 0) {
                             logger.warn("Could not parse ArchiverApplianceEvent due to '{}'. Error count '{}' for query '{}'.",
                                     e.getMessage(),
                                     errorCount,
-                                    new DefaultUriBuilderFactory().expand(QUERY_URL, channelName, start, end));
+                                    new DefaultUriBuilderFactory().expand(queryUrl, channelName, start, end));
                         }
                     }
 
