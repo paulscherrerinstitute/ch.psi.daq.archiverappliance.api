@@ -51,6 +51,9 @@ public class ConfigController {
         return archiverManager.getChannelConfigurations(request.getRegex())
                 .collectList()
                 .map(l -> {
+                    // Update backend for each channel (duplicate information but needed because of the ui right now)
+                    l.stream().forEach(c -> c.setBackend(backendId));
+
                     ResponseChannelConfigurations response = new ResponseChannelConfigurations();
                     response.setChannels(l);
                     response.setBackend(backendId);

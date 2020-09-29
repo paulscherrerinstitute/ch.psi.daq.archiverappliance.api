@@ -15,7 +15,7 @@ public class DataPoint {
 //    private String globalSeconds;
 //    private String globalDate;
 
-    private int eventCount;
+    private int eventCount = 1;
 
     public DataPointValue getValue() {
         return value;

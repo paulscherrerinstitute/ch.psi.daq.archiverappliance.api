@@ -28,7 +28,6 @@ public class QueryController {
         this.backendId = backendId;
     }
 
-
     @RequestMapping(value = "/query", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<ChannelResult> query(@RequestBody Query request) {
 
@@ -45,13 +44,13 @@ public class QueryController {
                                     DataPoint dataPoint = new DataPoint();
                                     dataPoint.setTimestamp(Instant.ofEpochSecond(p.getSeconds(), p.getNanoseconds()));
 
-//                                    DataPointMinMaxMeanValue value = new DataPointMinMaxMeanValue();
-//                                    value.setMax(p.getValue());
-//                                    value.setMin(p.getValue());
-//                                    value.setMean(p.getValue());
+                                    DataPointMinMaxMeanValue value = new DataPointMinMaxMeanValue();
+                                    value.setMax(p.getValue());
+                                    value.setMin(p.getValue());
+                                    value.setMean(p.getValue());
 
-                                    DataPointRawValue value = new DataPointRawValue();
-                                    value.setValue(p.getValue());
+//                                    DataPointRawValue value = new DataPointRawValue();
+//                                    value.setValue(p.getValue());
 
                                     dataPoint.setValue(value);
                                     return dataPoint;
