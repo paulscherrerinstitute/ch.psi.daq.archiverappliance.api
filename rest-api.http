@@ -169,3 +169,20 @@ Content-Type: application/json
 
 ###
 
+POST {{host}}/query
+Content-Type: application/json
+
+{
+  "range":{
+    "startDate":"2020-10-14T13:00:00.000Z",
+    "endDate":"2020-10-14T13:01:00.000Z"
+  },
+  "channels":[
+    {
+      "name": "TWLHA2-CVME-ILK:SYS_CPU_LOAD",
+      "backend":"twlha-archiverappliance"
+    }
+  ]
+}
+
+###

@@ -155,6 +155,8 @@ import java.util.Map;
  */
 public class ArchiverChannelConfiguration {
 
+    public static ArchiverChannelConfiguration EMPTY = new ArchiverChannelConfiguration();
+
     @JsonAlias("pvName")
     private String name;
     @JsonAlias("hostName")

@@ -11,6 +11,7 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -151,9 +152,9 @@ public class ArchiverConfigurationManager {
 
         return getChannels(false)
                 .filter(channelFilter)
-                .delayElements(Duration.ofMillis(1))
+//                .delayElements(Duration.ofMillis(1))
                 .flatMap(channel -> getChannelConfigurationFromArchiver(channel))
-//                .limitRequest(100) // For testing purposes limit the number of channel
+                .limitRequest(20) // For testing purposes limit the number of channel
                 .filter(m -> m != null)
                 .map(config -> mapArchiverChannelConfigurationToChannelConfiguration(config));
     }
@@ -165,27 +166,26 @@ public class ArchiverConfigurationManager {
      * @return Configuration of the channel, null if configuration cannot be retrieved from the server
      */
     public Mono<ArchiverChannelConfiguration> getChannelConfigurationFromArchiver(String channelName) {
-        Mono<ArchiverChannelConfiguration> configuration = null;
+        Mono<ArchiverChannelConfiguration> configuration;
 
-        try {
-            configuration = webClient
-                    .get()
-                    .uri("http://" + serverName + ":17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .map(v -> {
-                        try {
-                            return mapper.readValue(v, ArchiverChannelConfiguration.class);
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    });
-        } catch (WebClientResponseException e) {
-            logger.warn("Unable to retrieve configuration for channel {} - {}: {}", channelName, e.getRawStatusCode(), e.getStatusText());
-        } catch (Exception e) {
-            logger.warn("Unable to retrieve configuration for channel {}: {}", channelName, e.getMessage());
-        }
+        configuration = webClient
+                .get()
+                .uri("http://" + serverName + ":17665/mgmt/bpl/getPVTypeInfo?pv={pv}", channelName)
+                .retrieve()
+//                .onStatus(httpStatus -> HttpStatus.NOT_FOUND.equals(httpStatus),
+//                        clientResponse -> Mono.empty())
+                .bodyToMono(String.class)
+//                .onErrorResume(e -> Mono.empty())
+                .onErrorResume(WebClientResponseException.class, ex -> ex.getRawStatusCode() == 404 ? Mono.empty() : Mono.error(ex))
+                .map(v -> {
+                    try {
+                        return mapper.readValue(v, ArchiverChannelConfiguration.class);
+                    } catch (JsonProcessingException e) {
+                        logger.warn("Unable to parse return value vor channel: {} Error: {}", channelName, e.getMessage());
+                    }
+                    return ArchiverChannelConfiguration.EMPTY;
+                })
+                .filter(c -> c != ArchiverChannelConfiguration.EMPTY);
         return configuration;
     }
 

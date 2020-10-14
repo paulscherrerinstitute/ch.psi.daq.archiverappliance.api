@@ -1,6 +1,7 @@
 
 # To be able to test this you first have to establish a VPN to the machine network like this:
-# sshuttle -r sflca 172.26.120.0/24 172.26.40.0/24
+# sshuttle -r sf-lca 172.26.120.0/24 172.26.40.0/24
+# sshuttle -r twlha-lca 172.21.11.0/2
 
 # Get Channel metadata:
 GET http://sf-archapp-05.psi.ch:17665/mgmt/bpl/getPVTypeInfo?pv=STSRD01-TSPL-OMO2:SPERIOD_LOCKED

@@ -18,17 +18,24 @@ public class ArchiverConfigurationManagerTest {
     @Test
     public void getChannelConfiguration() {
         ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
-                "sf-archapp-05.psi.ch",
+//                "sf-archapp-05.psi.ch",
+                "twlha-archapp-01.psi.ch",
                 Jackson2ObjectMapperBuilder.json().build());
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration("S10-CPPS-DALA01:CH2READ");
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration("CR0808:CURRENT-3-3");
 
         // See whether ISO characters are correctly translated
-        ArchiverChannelConfiguration configuration = manager.getChannelConfigurationFromArchiver("SGE-EDRPS01-DDA0302:DOSE-MEAN-R").block();
+//        ArchiverChannelConfiguration configuration = manager.getChannelConfigurationFromArchiver("SGE-EDRPS01-DDA0302:DOSE-MEAN-R").block();
+        ArchiverChannelConfiguration configuration = manager.getChannelConfigurationFromArchiver("S10-CPCL-VM1MGC:LOAD").block();
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration(".*");
-        System.out.println(configuration.getName());
-        System.out.println(configuration.getUnit());
-        System.out.println(configuration.getType());
+        if(configuration != null) {
+            System.out.println(configuration.getName());
+            System.out.println(configuration.getUnit());
+            System.out.println(configuration.getType());
+        }
+        else{
+            System.out.println("no config");
+        }
     }
 
     @Test

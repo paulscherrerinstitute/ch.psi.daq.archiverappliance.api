@@ -44,13 +44,13 @@ public class QueryController {
                                     DataPoint dataPoint = new DataPoint();
                                     dataPoint.setTimestamp(Instant.ofEpochSecond(p.getSeconds(), p.getNanoseconds()));
 
-                                    DataPointMinMaxMeanValue value = new DataPointMinMaxMeanValue();
-                                    value.setMax(p.getValue());
-                                    value.setMin(p.getValue());
-                                    value.setMean(p.getValue());
+//                                    DataPointMinMaxMeanValue value = new DataPointMinMaxMeanValue();
+//                                    value.setMax(p.getValue());
+//                                    value.setMin(p.getValue());
+//                                    value.setMean(p.getValue());
 
-//                                    DataPointRawValue value = new DataPointRawValue();
-//                                    value.setValue(p.getValue());
+                                    DataPointRawValue value = new DataPointRawValue();
+                                    value.setValue(p.getValue());
 
                                     dataPoint.setValue(value);
                                     return dataPoint;
