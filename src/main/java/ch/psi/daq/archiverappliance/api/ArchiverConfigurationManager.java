@@ -11,7 +11,6 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -24,7 +23,6 @@ import reactor.netty.tcp.TcpClient;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -35,13 +33,19 @@ public class ArchiverConfigurationManager {
     private static final Logger logger = LoggerFactory.getLogger(ArchiverConfigurationManager.class);
 
     private String serverName;
-    private String channelsFileName = "channels.json";
-    private String channelsConfigurationsFileName = "channel_configurations.json";
+    private String fileNameChannelsCache;
+    private String fileNameChannelsConfigCache;
 
     private ObjectMapper mapper;
     private WebClient webClient;
 
-    public ArchiverConfigurationManager(@Value("${server.name}") String serverName, ObjectMapper mapper) {
+    public ArchiverConfigurationManager(@Value("${server.name}") String serverName,
+                                        @Value("${filename.channels.cache}") String fileNameChannelsCache,
+                                        @Value("${filename.channels.config.cache}") String fileNameChannelsConfigCache,
+                                        ObjectMapper mapper) {
+        this.fileNameChannelsCache = fileNameChannelsCache;
+        this.fileNameChannelsConfigCache = fileNameChannelsConfigCache;
+
         this.serverName = serverName;
         this.mapper = mapper;
 
@@ -76,7 +80,7 @@ public class ArchiverConfigurationManager {
         }
         Flux<String> channelsFlux;
         try {
-            List<String> channels = mapper.readValue(Paths.get(channelsFileName).toFile(), new TypeReference<>() {
+            List<String> channels = mapper.readValue(Paths.get(fileNameChannelsCache).toFile(), new TypeReference<>() {
             });
             channelsFlux = Flux.fromStream(channels.stream());
         } catch (IOException e) {
@@ -128,7 +132,7 @@ public class ArchiverConfigurationManager {
     public Mono<Boolean> fetchChannels() {
         return getChannelsFromArchiver().collectList().map(channelList -> {
             try {
-                mapper.writeValue(Paths.get(channelsFileName).toFile(), channelList);
+                mapper.writeValue(Paths.get(fileNameChannelsCache).toFile(), channelList);
             } catch (IOException e) {
                 logger.error("Unable to write channels file", e);
                 return false;
@@ -214,7 +218,7 @@ public class ArchiverConfigurationManager {
     public Mono<Boolean> fetchChannelConfigurations() {
         return getChannelConfigurations(".*").collectList().map(channelList -> {
             try {
-                mapper.writeValue(Paths.get(channelsConfigurationsFileName).toFile(), channelList);
+                mapper.writeValue(Paths.get(fileNameChannelsConfigCache).toFile(), channelList);
             } catch (IOException e) {
                 logger.error("Unable to write channels configuration file", e);
                 return false;

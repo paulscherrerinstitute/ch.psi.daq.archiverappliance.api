@@ -20,6 +20,8 @@ public class ArchiverConfigurationManagerTest {
         ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
 //                "sf-archapp-05.psi.ch",
                 "twlha-archapp-01.psi.ch",
+                "channels.json",
+                "channels_configuration.json",
                 Jackson2ObjectMapperBuilder.json().build());
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration("S10-CPPS-DALA01:CH2READ");
 //        ArchiverChannelConfiguration configuration = manager.getChannelConfiguration("CR0808:CURRENT-3-3");
@@ -42,6 +44,8 @@ public class ArchiverConfigurationManagerTest {
     public void fetchChannelConfigurations() {
         ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
                 "sf-archapp-05.psi.ch",
+                "channels.json",
+                "channels_configuration.json",
                 Jackson2ObjectMapperBuilder.json().build());
         manager.fetchChannelConfigurations().block();
     }
@@ -50,6 +54,8 @@ public class ArchiverConfigurationManagerTest {
     public void fetchChannels() {
         ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
                 "sf-archapp-05.psi.ch",
+                "channels.json",
+                "channels_configuration.json",
                 Jackson2ObjectMapperBuilder.json().build());
         assertTrue(manager.fetchChannels().block());
     }
@@ -58,6 +64,8 @@ public class ArchiverConfigurationManagerTest {
     void getChannels() {
         ArchiverConfigurationManager manager = new ArchiverConfigurationManager(
                 "sf-archapp-05.psi.ch",
+                "channels.json",
+                "channels_configuration.json",
                 Jackson2ObjectMapperBuilder.json().build());
         List<String> channels = manager.getChannels(true).collectList().block();
         System.out.println(channels);
