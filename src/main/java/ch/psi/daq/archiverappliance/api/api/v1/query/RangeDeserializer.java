@@ -7,8 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.time.format.DateTimeParseException;
 
 public class RangeDeserializer extends JsonDeserializer {
@@ -26,10 +25,16 @@ public class RangeDeserializer extends JsonDeserializer {
                 dateRange.setEndDate(Instant.parse(node.get("endDate").textValue()));
             }
             catch (DateTimeParseException e){
-                // Try to parse the string in a different way
-                // https://howtodoinjava.com/java/date-time/parse-string-to-date-time-utc-gmt/
-                dateRange.setStartDate(OffsetDateTime.parse(node.get("startDate").textValue()).toInstant());
-                dateRange.setEndDate(OffsetDateTime.parse(node.get("endDate").textValue()).toInstant());
+                try {
+                    // Try to parse the string in a different way
+                    // https://howtodoinjava.com/java/date-time/parse-string-to-date-time-utc-gmt/
+                    dateRange.setStartDate(OffsetDateTime.parse(node.get("startDate").textValue()).toInstant());
+                    dateRange.setEndDate(OffsetDateTime.parse(node.get("endDate").textValue()).toInstant());
+                }
+                catch(Exception ex){
+                    dateRange.setStartDate(LocalDateTime.parse(node.get("startDate").textValue()).atZone(ZoneId.systemDefault()).toInstant());
+                    dateRange.setEndDate(LocalDateTime.parse(node.get("endDate").textValue()).atZone(ZoneId.systemDefault()).toInstant());
+                }
             }
 
             range = dateRange;
