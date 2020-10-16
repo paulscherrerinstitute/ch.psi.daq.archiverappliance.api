@@ -62,12 +62,11 @@ GET {{host}}/params/responseformat
 
 GET {{host}}/params/compression
 
+###
+
+GET {{host}}/params/backends/byid
+
 #### NOT YET SUPPORTED
-#
-#GET {{host}}/params/backends/byid
-#Content-Type: application/json
-#
-####
 #
 #GET {{host}}/params/queryfields
 #Content-Type: application/json

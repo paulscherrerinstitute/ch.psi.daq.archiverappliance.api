@@ -21,11 +21,11 @@ public class QueryController {
     private static final Logger logger = LoggerFactory.getLogger(QueryController.class);
 
     private ArchiverQueryManager archiverManager;
-    private String backendId;
+    private String backendName;
 
-    public QueryController(ArchiverQueryManager archiverManager, @Value("${backend.id}") String backendId) {
+    public QueryController(ArchiverQueryManager archiverManager, @Value("${backend.name}") String backendName) {
         this.archiverManager = archiverManager;
-        this.backendId = backendId;
+        this.backendName = backendName;
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -58,7 +58,7 @@ public class QueryController {
                                 .map(l -> {  // construct the channel result
                                     ChannelDescription description = new ChannelDescription();
                                     description.setName(channelName);
-                                    description.setBackend(backendId);
+                                    description.setBackend(backendName);
                                     ChannelResult result = new ChannelResult();
                                     result.setChannel(description);
                                     result.setData(l);

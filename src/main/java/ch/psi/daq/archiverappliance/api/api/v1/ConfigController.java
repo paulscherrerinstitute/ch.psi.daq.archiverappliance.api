@@ -14,7 +14,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @CrossOrigin
@@ -23,11 +25,16 @@ public class ConfigController {
     private static final Logger logger = LoggerFactory.getLogger(ConfigController.class);
 
     private ArchiverConfigurationManager archiverManager;
-    private String backendId;
+    private String backendName;
+    private int backendId;
 
-    public ConfigController(ArchiverConfigurationManager archiverManager, @Value("${backend.id}") String backendId){
+    public ConfigController(ArchiverConfigurationManager archiverManager,
+                            @Value("${backend.name}") String backendName,
+                            @Value("${backend.id}") int backendId){
         this.archiverManager = archiverManager;
+        this.backendName = backendName;
         this.backendId = backendId;
+
     }
 
 
@@ -52,11 +59,11 @@ public class ConfigController {
                 .collectList()
                 .map(l -> {
                     // Update backend for each channel (duplicate information but needed because of the ui right now)
-                    l.stream().forEach(c -> c.setBackend(backendId));
+                    l.stream().forEach(c -> c.setBackend(backendName));
 
                     ResponseChannelConfigurations response = new ResponseChannelConfigurations();
                     response.setChannels(l);
-                    response.setBackend(backendId);
+                    response.setBackend(backendName);
                     return response;
                 })
                 .flux();
@@ -66,8 +73,15 @@ public class ConfigController {
     // Backward compatibility functions only
 
     @RequestMapping(value="/params/backends", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
-    public List<String> getBackends(){
-        return Arrays.asList(backendId);
+    public List<String> getBackendName(){
+        return Arrays.asList(backendName);
+    }
+
+    @RequestMapping(value="/params/backends/byid", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> getBackendId(){
+        Map<String, String> map = new HashMap<>();
+        map.put(backendId+"", backendName);
+        return map;
     }
 
     @RequestMapping(value="/params/aggregations", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
