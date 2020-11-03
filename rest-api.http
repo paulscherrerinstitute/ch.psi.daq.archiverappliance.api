@@ -8,14 +8,18 @@
 POST {{host}}/channels
 Content-Type: application/json
 
-{"reload": true}
+{
+  "reload": true
+}
 
 ###
 
 POST {{host}}/channels
 Content-Type: application/json
 
-{"reload": false}
+{
+  "reload": false
+}
 
 ###
 
@@ -32,8 +36,9 @@ Content-Type: application/json
 
 {
   "reload": false,
-  "regex":  "S10-CPCL.*"
+  "regex": "S10-CPCL.*"
 }
+
 ###
 
 GET {{host}}/params/backends
@@ -81,14 +86,18 @@ GET {{host}}/params/backends/byid
 POST {{host}}/channels/config
 Content-Type: application/json
 
-{"regex":"CR0808:CURRENT-3-3"}
+{
+  "regex": "CR0808:CURRENT-3-3"
+}
 
 ###
 
 POST {{host}}/channels/config
 Content-Type: application/json
 
-{"regex":".*"}
+{
+  "regex": ".*"
+}
 
 ###
 
@@ -96,7 +105,9 @@ POST {{host}}/query
 Content-Type: application/json
 
 {
-  "channels": ["SLG-LSCP3-FNS:CH7:VAL_GET"],
+  "channels": [
+    "SLG-LSCP3-FNS:CH7:VAL_GET"
+  ],
   "range": {
     "startDate": "2019-10-03T10:00:00.000000000Z",
     "endDate": "2019-10-03T10:05:00.000000000Z"
@@ -109,22 +120,22 @@ POST {{host}}/query
 Content-Type: application/json
 
 {
-  "range":{
-    "startDate":"2019-07-08T01:00:00.000Z",
-    "endDate":"2019-07-09T01:00:00.000Z"
+  "range": {
+    "startDate": "2019-07-08T01:00:00.000Z",
+    "endDate": "2019-07-09T01:00:00.000Z"
   },
-  "channels":[
+  "channels": [
     {
       "name": "SINEG01-DWCM170:TIME",
-      "backend":"sf-archiverappliance"
+      "backend": "sf-archiverappliance"
     },
     {
       "name": "SINLH01-DBAM010:EOM1_T1",
-      "backend":"sf-archiverappliance"
+      "backend": "sf-archiverappliance"
     },
     {
       "name": "S10BC01-DBAM070:EOM1_T1",
-      "backend":"sf-archiverappliance"
+      "backend": "sf-archiverappliance"
     }
   ]
 }
@@ -136,14 +147,14 @@ POST {{host}}/query
 Content-Type: application/json
 
 {
-  "range":{
-    "startDate":"2019-07-29T06:00:00.000Z",
-    "endDate":"2019-08-02T06:00:00.000Z"
+  "range": {
+    "startDate": "2019-07-29T06:00:00.000Z",
+    "endDate": "2019-08-02T06:00:00.000Z"
   },
-  "channels":[
+  "channels": [
     {
       "name": "S30CB04-RILK:STR-DESC-CURRENT-LOG",
-      "backend":"sf-archiverappliance"
+      "backend": "sf-archiverappliance"
     }
   ]
 }
@@ -154,14 +165,14 @@ POST {{host}}/query
 Content-Type: application/json
 
 {
-  "range":{
-    "startDate":"2019-11-14T10:15:30.786Z",
-    "endDate":"2019-11-14T10:16:30.786Z"
+  "range": {
+    "startDate": "2019-11-14T10:15:30.786Z",
+    "endDate": "2019-11-14T10:16:30.786Z"
   },
-  "channels":[
+  "channels": [
     {
       "name": "S10CB01-RBOC-DCP10:FOR-AMPLT",
-      "backend":"sf-databuffer"
+      "backend": "sf-databuffer"
     }
   ]
 }
@@ -172,14 +183,14 @@ POST {{host}}/query
 Content-Type: application/json
 
 {
-  "range":{
-    "startDate":"2020-10-14T13:00:00.000Z",
-    "endDate":"2020-10-14T13:01:00.000Z"
+  "range": {
+    "startDate": "2020-10-14T13:00:00.000Z",
+    "endDate": "2020-10-14T13:01:00.000Z"
   },
-  "channels":[
+  "channels": [
     {
       "name": "TWLHA2-CVME-ILK:SYS_CPU_LOAD",
-      "backend":"twlha-archiverappliance"
+      "backend": "twlha-archiverappliance"
     }
   ]
 }
@@ -191,14 +202,14 @@ POST {{host}}/query
 Content-Type: application/json
 
 {
-  "range":{
-    "startDate":"2020-10-14T13:00:00.000",
-    "endDate":"2020-10-14T13:01:00.000"
+  "range": {
+    "startDate": "2020-10-14T13:00:00.000",
+    "endDate": "2020-10-14T13:01:00.000"
   },
-  "channels":[
+  "channels": [
     {
       "name": "TWLHA2-CVME-ILK:SYS_CPU_LOAD",
-      "backend":"twlha-archiverappliance"
+      "backend": "twlha-archiverappliance"
     }
   ]
 }
@@ -210,25 +221,60 @@ POST {{host}}/query
 Content-Type: application/json
 
 {
-  "range":{
-    "startDate":"2020-10-14T13:00:00.000",
-    "endDate":"2020-10-14T13:10:00.000"
+  "range": {
+    "startDate": "2020-10-14T13:00:00.000",
+    "endDate": "2020-10-14T13:10:00.000"
   },
-  "aggregation":{
-    "aggregationType":"value",
-    "aggregations":[
+  "aggregation": {
+    "aggregationType": "value",
+    "aggregations": [
       "min",
       "mean",
       "max"
     ],
-    "nrOfBins":2
+    "nrOfBins": 2
   },
-  "channels":[
+  "channels": [
     {
       "name": "TWLHA2-CVME-ILK:SYS_CPU_LOAD",
-      "backend":"twlha-archiverappliance"
+      "backend": "twlha-archiverappliance"
     }
   ]
 }
+
+###
+
+POST {{host}}/query
+Content-Type: application/json
+
+## if changing 1604419588.316 to 1604419688.316 all is ok
+{
+  "channels": [
+    {
+      "backend": "twlha-archiverappliance",
+      "name": "TWLHA2-CVME-ILK:SYS_CPU_LOAD"
+    }
+  ],
+  "range": {
+    "startSeconds": 1604419408.316,
+    "endSeconds": 1604419588.316
+  },
+  "eventFields": [
+    "globalMillis",
+    "pulseId",
+    "value",
+    "eventCount"
+  ],
+  "aggregation": {
+    "aggregationType": "value",
+    "aggregations": [
+      "max",
+      "mean",
+      "min"
+    ],
+    "nrOfBins": 512
+  }
+}
+
 
 ###
