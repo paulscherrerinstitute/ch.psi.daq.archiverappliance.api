@@ -19,7 +19,7 @@ import java.util.List;
 public class Aggregation {
     private String aggregationType = "value"; // value (default) or index
     private List<String> aggregations;
-    private int nrOfbins;
+    private int nrOfBins;
 
     public String getAggregationType() {
         return aggregationType;
@@ -37,11 +37,11 @@ public class Aggregation {
         this.aggregations = aggregations;
     }
 
-    public int getNrOfbins() {
-        return nrOfbins;
+    public int getNrOfBins() {
+        return nrOfBins;
     }
 
-    public void setNrOfbins(int nrOfbins) {
-        this.nrOfbins = nrOfbins;
+    public void setNrOfBins(int nrOfBins) {
+        this.nrOfBins = nrOfBins;
     }
 }

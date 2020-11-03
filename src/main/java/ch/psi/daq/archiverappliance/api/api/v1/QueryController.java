@@ -1,6 +1,9 @@
 package ch.psi.daq.archiverappliance.api.api.v1;
 
 import ch.psi.daq.archiverappliance.api.ArchiverQueryManager;
+import ch.psi.daq.archiverappliance.api.BinMinMaxMeanCollector;
+import ch.psi.daq.archiverappliance.api.DataPointRawValueMapper;
+import ch.psi.daq.archiverappliance.api.DateRangeBinBoundaryTrigger;
 import ch.psi.daq.archiverappliance.api.api.v1.query.DateRange;
 import ch.psi.daq.archiverappliance.api.api.v1.query.Query;
 import ch.psi.daq.archiverappliance.api.api.v1.query.Range;
@@ -14,6 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -38,23 +42,21 @@ public class QueryController {
                     Range range = request.getRange();
                     if (range instanceof DateRange) {
 
-                        Mono<ChannelResult> mono = archiverManager.queryStream(channelName, ((DateRange) range).getStartDate(), ((DateRange) range).getEndDate())
-                                .skip(1) // The archiver appliance does always return one data point before the actual range
-                                .map(p -> {  // map the datapoints to the different format
-                                    DataPoint dataPoint = new DataPoint();
-                                    dataPoint.setTimestamp(Instant.ofEpochSecond(p.getSeconds(), p.getNanoseconds()));
+                        // Query the Archiver and map data to api data format
+                        Flux<DataPoint> flux = archiverManager.queryStream(channelName, ((DateRange) range).getStartDate(), ((DateRange) range).getEndDate())
+                                .skip(1) // The Srchiver appliance does always return one data point before the actual range
+                                .map(new DataPointRawValueMapper());
 
-//                                    DataPointMinMaxMeanValue value = new DataPointMinMaxMeanValue();
-//                                    value.setMax(p.getValue());
-//                                    value.setMin(p.getValue());
-//                                    value.setMean(p.getValue());
 
-                                    DataPointRawValue value = new DataPointRawValue();
-                                    value.setValue(p.getValue());
+                        // Aggregate values if requested
+                        if(request.getAggregation()!= null){
+                            flux = flux.windowUntil(new DateRangeBinBoundaryTrigger((DateRange) request.getRange(), request.getAggregation().getNrOfBins()), true)
+                                    .flatMap( x -> x.collect(new BinMinMaxMeanCollector()));
+                        }
 
-                                    dataPoint.setValue(value);
-                                    return dataPoint;
-                                }).collectList()  // collect all results into a list
+                        // Construct return datastructure
+                        Mono<ChannelResult> mono = flux
+                                .collectList()  // collect all results into a list
                                 .map(l -> {  // construct the channel result
                                     ChannelDescription description = new ChannelDescription();
                                     description.setName(channelName);
@@ -66,6 +68,7 @@ public class QueryController {
                                 });
                         return mono;
                     }
+
                     return Mono.empty();
                 });
     }

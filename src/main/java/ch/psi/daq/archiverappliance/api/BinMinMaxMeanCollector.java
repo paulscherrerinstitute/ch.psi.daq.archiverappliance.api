@@ -24,7 +24,7 @@ public class BinMinMaxMeanCollector implements Collector<DataPoint, DataPoint, D
             // this way we ensure that min/max get updated
             value.setMin(Double.MAX_VALUE);
             value.setMax(Double.MIN_VALUE);
-            value.setMean(Double.NaN);
+
             point.setValue(value);
             return point;
         };
@@ -48,12 +48,8 @@ public class BinMinMaxMeanCollector implements Collector<DataPoint, DataPoint, D
                 bufferValue.setMax(v);
             }
 
-            if(Double.isNaN(bufferValue.getMean())) {
-                bufferValue.setMean(v);
-            }
-            else{
-                bufferValue.setMean((bufferValue.getMean() + v) / 2);
-            }
+            // for calculating mean
+            bufferValue.sumUp(v);
         };
     }
 
@@ -75,7 +71,8 @@ public class BinMinMaxMeanCollector implements Collector<DataPoint, DataPoint, D
                 bufferOneValue.setMax(bufferTwoValue.getMax());
             }
 
-            bufferOneValue.setMean((bufferOneValue.getMean() + bufferTwoValue.getMean())/2);
+            bufferOneValue.setSum(bufferOneValue.getSum() + bufferTwoValue.getSum());
+            bufferOneValue.setCount(bufferOneValue.getCount()+bufferTwoValue.getCount());
 
             return bufferOne;
         };
