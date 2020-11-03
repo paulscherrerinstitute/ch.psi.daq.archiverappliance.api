@@ -17,4 +17,10 @@ public class DataPointRawValue extends DataPointValue {
     public void setValue(double value) {
         this.value = value;
     }
+
+    // TODO remove - for testing purpose only
+    @Override
+    public String toString() {
+        return ""+value;
+    }
 }

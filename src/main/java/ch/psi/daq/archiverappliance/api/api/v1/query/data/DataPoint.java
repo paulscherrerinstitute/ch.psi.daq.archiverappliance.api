@@ -57,4 +57,9 @@ public class DataPoint {
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public String toString() {
+        return timestamp.toString() + " - " + value.toString();
+    }
 }

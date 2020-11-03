@@ -6,6 +6,9 @@ public class DataPointMinMaxMeanValue extends DataPointValue {
     private double mean;
 
     public DataPointMinMaxMeanValue() {
+        min = Double.MIN_VALUE;
+        max = Double.MAX_VALUE;
+        mean = Double.NaN;
     }
 
     public DataPointMinMaxMeanValue(double min, double max, double mean) {
@@ -36,5 +39,10 @@ public class DataPointMinMaxMeanValue extends DataPointValue {
 
     public void setMean(double mean) {
         this.mean = mean;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + min + " " + mean + " " + max + "]";
     }
 }
