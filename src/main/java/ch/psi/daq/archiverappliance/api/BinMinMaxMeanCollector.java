@@ -80,7 +80,10 @@ public class BinMinMaxMeanCollector implements Collector<DataPoint, DataPoint, D
 
     @Override
     public Function<DataPoint, DataPoint> finisher() {
-        return buffer -> buffer;    // or Function.identity();
+        return buffer -> {
+            buffer.setEventCount(((DataPointMinMaxMeanValue)buffer.getValue()).getCount());
+            return buffer;
+        };    // or Function.identity();
     }
 
     @Override
