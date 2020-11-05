@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.Instant;
 
-public class DataPoint {
+public class  DataPoint {
     private DataPointValue value;
 
     @JsonIgnore
@@ -16,6 +16,10 @@ public class DataPoint {
 //    private String globalDate;
 
     private int eventCount = 1;
+
+    public DataPoint(Instant timestamp){
+        this.timestamp = timestamp;
+    }
 
     public DataPointValue getValue() {
         return value;

@@ -4,6 +4,7 @@ import ch.psi.daq.archiverappliance.api.api.v1.query.data.DataPoint;
 import ch.psi.daq.archiverappliance.api.api.v1.query.data.DataPointMinMaxMeanValue;
 import ch.psi.daq.archiverappliance.api.api.v1.query.data.DataPointRawValue;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -19,7 +20,7 @@ public class BinMinMaxMeanCollector implements Collector<DataPoint, DataPoint, D
     @Override
     public Supplier<DataPoint> supplier() {
         return ()->{
-            DataPoint point = new DataPoint();
+            DataPoint point = new DataPoint(Instant.EPOCH);
             DataPointMinMaxMeanValue value = new DataPointMinMaxMeanValue();
             // this way we ensure that min/max get updated
             value.setMin(Double.MAX_VALUE);

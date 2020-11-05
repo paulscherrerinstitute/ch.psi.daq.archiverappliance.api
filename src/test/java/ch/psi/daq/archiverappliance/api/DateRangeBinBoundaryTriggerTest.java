@@ -59,8 +59,7 @@ class DateRangeBinBoundaryTriggerTest {
         List<DataPoint> list = new ArrayList<>();
 //        for(int offset: new Integer[]{4,8}){
         for(int offset: new Integer[]{0,1,2,4,8,10}){
-            DataPoint point = new DataPoint();
-            point.setTimestamp(start.plus(Duration.ofMinutes(offset)));
+            DataPoint point = new DataPoint(start.plus(Duration.ofMinutes(offset)));
 
             DataPointRawValue value = new DataPointRawValue();
             value.setValue(offset);
