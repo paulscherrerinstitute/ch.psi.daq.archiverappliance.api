@@ -17,6 +17,9 @@ public class  DataPoint {
 
     private int eventCount = 1;
 
+    public DataPoint(){
+    }
+
     public DataPoint(Instant timestamp){
         this.timestamp = timestamp;
     }

@@ -14,3 +14,10 @@ Provide specific configuration:
 ```bash
 -Dspring.config.location=/tmp/application.properties
 ```
+
+# Development
+
+To build an upload the project use:
+```bash
+gradle -x test clean build bootJar uploadBootArchives
+```
