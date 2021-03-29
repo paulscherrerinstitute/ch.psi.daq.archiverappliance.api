@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @CrossOrigin
@@ -45,8 +42,8 @@ public class ConfigController {
 
         Flux<String> flux = archiverManager.getChannels(request.isReload());
         if(request.getRegex() != ".*") {
-            final Pattern pattern = Pattern.compile(request.getRegex());
-            flux = flux.filter(channel -> pattern.matcher(channel).find());
+            final Pattern pattern = Pattern.compile(request.getRegex().toLowerCase());
+            flux = flux.filter(channel -> pattern.matcher(channel.toLowerCase()).find());
         }
         return flux.collectList();
     }

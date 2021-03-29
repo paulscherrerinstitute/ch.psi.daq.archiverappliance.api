@@ -36,7 +36,7 @@ Content-Type: application/json
 
 {
   "reload": false,
-  "regex": "S10-CPCL.*"
+  "regex": "twlha"
 }
 
 ###

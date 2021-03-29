@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 @Service
 public class ArchiverConfigurationManager {
@@ -151,14 +153,15 @@ public class ArchiverConfigurationManager {
     public Flux<ChannelConfiguration> getChannelConfigurations(String regexPattern) {
         Predicate<String> channelFilter = x -> true;
         if (regexPattern != ".*") {
-            channelFilter = x -> x.matches(regexPattern);
+            final Pattern pattern  = Pattern.compile(regexPattern.toLowerCase());
+            channelFilter = x -> pattern.matcher(x.toLowerCase()).find();
         }
 
         return getChannels(false)
                 .filter(channelFilter)
 //                .delayElements(Duration.ofMillis(1))
                 .flatMap(channel -> getChannelConfigurationFromArchiver(channel))
-                .limitRequest(20) // For testing purposes limit the number of channel
+//                .limitRequest(20) // For testing purposes limit the number of channel
                 .filter(m -> m != null)
                 .map(config -> mapArchiverChannelConfigurationToChannelConfiguration(config));
     }
