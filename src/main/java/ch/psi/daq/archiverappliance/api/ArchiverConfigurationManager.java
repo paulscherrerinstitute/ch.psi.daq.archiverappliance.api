@@ -153,8 +153,8 @@ public class ArchiverConfigurationManager {
     public Flux<ChannelConfiguration> getChannelConfigurations(String regexPattern) {
         Predicate<String> channelFilter = x -> true;
         if (regexPattern != ".*") {
-            final Pattern pattern  = Pattern.compile(regexPattern.toLowerCase());
-            channelFilter = x -> pattern.matcher(x.toLowerCase()).find();
+            final Pattern pattern  = Pattern.compile(regexPattern, Pattern.CASE_INSENSITIVE);
+            channelFilter = x -> pattern.matcher(x).find();
         }
 
         return getChannels(false)

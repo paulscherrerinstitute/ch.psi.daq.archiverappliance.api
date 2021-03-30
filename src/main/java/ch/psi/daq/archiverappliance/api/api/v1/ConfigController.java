@@ -42,8 +42,8 @@ public class ConfigController {
 
         Flux<String> flux = archiverManager.getChannels(request.isReload());
         if(request.getRegex() != ".*") {
-            final Pattern pattern = Pattern.compile(request.getRegex().toLowerCase());
-            flux = flux.filter(channel -> pattern.matcher(channel.toLowerCase()).find());
+            final Pattern pattern = Pattern.compile(request.getRegex(), Pattern.CASE_INSENSITIVE);
+            flux = flux.filter(channel -> pattern.matcher(channel).find());
         }
         return flux.collectList();
     }
