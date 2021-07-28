@@ -15,6 +15,12 @@ Provide specific configuration:
 -Dspring.config.location=/tmp/application.properties
 ```
 
+
+TWLHA example: Forcing Rebuild of the internal channel cache:
+```
+curl -H Content-Type:application/json -X POST http://twlha-data-api.psi.ch:9090/channels -d '{ "reload" : true }'
+```
+
 # Development
 
 To build an upload the project use:
