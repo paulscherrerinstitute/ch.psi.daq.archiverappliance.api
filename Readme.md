@@ -16,9 +16,14 @@ Provide specific configuration:
 ```
 
 
-TWLHA example: Forcing Rebuild of the internal channel cache:
+TWLHA example: Get channels and force rebuild of the internal channel cache:
 ```
 curl -H Content-Type:application/json -X POST http://twlha-data-api.psi.ch:9090/channels -d '{ "reload" : true }'
+```
+
+TWLHA example: Get channel configuration
+```
+curl -H Content-Type:application/json -X POST http://twlha-data-api.psi.ch:9090/channels/config -d '{}'
 ```
 
 # Development
