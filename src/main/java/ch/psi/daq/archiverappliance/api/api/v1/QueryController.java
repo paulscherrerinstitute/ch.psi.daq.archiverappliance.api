@@ -47,18 +47,18 @@ public class QueryController {
                         Instant end = ((DateRange) range).getEndDate();
                         if(!end.isAfter(start)){ // end needs to be after start
                             logger.error("Invalid time range - end is not after start - channel: " + channelName);
-                            return Mono.empty(); // workaround
-//                            return Mono.error(new RuntimeException("Invalid time range - end is not after start"));
+//                            return Mono.empty(); // workaround
+                            return Mono.error(new RuntimeException("Invalid time range - end is not after start"));
                         }
 
                         // Query the Archiver and map data to api data format
                         Flux<DataPoint> flux = archiverManager.queryStream(channelName, ((DateRange) range).getStartDate(), ((DateRange) range).getEndDate())
-                                .skip(1) // The Srchiver appliance does always return one data point before the actual range
+                                .skip(1) // The archiver appliance does always return one data point before the actual range
                                 .map(new DataPointRawValueMapper());
 
 
                         // Aggregate values if requested
-                        if(request.getAggregation()!= null){
+                        if(request.getAggregation()!= null && request.getAggregation().getNrOfBins() > 0){
                             flux = flux.windowUntil(new DateRangeBinBoundaryTrigger((DateRange) request.getRange(), request.getAggregation().getNrOfBins()), true)
                                     .flatMap( x -> x.collect(new BinMinMaxMeanCollector()));
                         }

@@ -43,8 +43,8 @@ public class RangeDeserializer extends JsonDeserializer {
             // Seconds from epoch range
             DateRange dateRange = new DateRange();
 
-            dateRange.setStartDate(Instant.ofEpochMilli((long)(node.get("startSeconds").doubleValue()*1000)));
-            dateRange.setEndDate(Instant.ofEpochMilli((long)(node.get("endSeconds").doubleValue()*1000)));
+            dateRange.setStartDate(Instant.ofEpochMilli((long)(Double.parseDouble(node.get("startSeconds").asText())*1000)));
+            dateRange.setEndDate(Instant.ofEpochMilli((long)(Double.parseDouble(node.get("endSeconds").asText())*1000)));
 
             range = dateRange;
         }
