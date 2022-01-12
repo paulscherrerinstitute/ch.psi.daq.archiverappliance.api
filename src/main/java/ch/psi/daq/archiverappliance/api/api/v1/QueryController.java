@@ -42,6 +42,15 @@ public class QueryController {
                     Range range = request.getRange();
                     if (range instanceof DateRange) {
 
+                        // sanity checks for range
+                        Instant start = ((DateRange) range).getStartDate();
+                        Instant end = ((DateRange) range).getEndDate();
+                        if(!end.isAfter(start)){ // end needs to be after start
+                            logger.error("Invalid time range - end is not after start - channel: " + channelName);
+                            return Mono.empty(); // workaround
+//                            return Mono.error(new RuntimeException("Invalid time range - end is not after start"));
+                        }
+
                         // Query the Archiver and map data to api data format
                         Flux<DataPoint> flux = archiverManager.queryStream(channelName, ((DateRange) range).getStartDate(), ((DateRange) range).getEndDate())
                                 .skip(1) // The Srchiver appliance does always return one data point before the actual range
