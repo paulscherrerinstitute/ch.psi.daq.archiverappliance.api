@@ -4,6 +4,7 @@ import ch.psi.daq.archiverappliance.api.ArchiverQueryManager;
 import ch.psi.daq.archiverappliance.api.BinMinMaxMeanCollector;
 import ch.psi.daq.archiverappliance.api.DataPointRawValueMapper;
 import ch.psi.daq.archiverappliance.api.DateRangeBinBoundaryTrigger;
+import ch.psi.daq.archiverappliance.api.api.v1.query.Aggregation;
 import ch.psi.daq.archiverappliance.api.api.v1.query.DateRange;
 import ch.psi.daq.archiverappliance.api.api.v1.query.Query;
 import ch.psi.daq.archiverappliance.api.api.v1.query.Range;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
@@ -58,9 +60,17 @@ public class QueryController {
 
 
                         // Aggregate values if requested
-                        if(request.getAggregation()!= null && request.getAggregation().getNrOfBins() > 0){
-                            flux = flux.windowUntil(new DateRangeBinBoundaryTrigger((DateRange) request.getRange(), request.getAggregation().getNrOfBins()), true)
-                                    .flatMap( x -> x.collect(new BinMinMaxMeanCollector()));
+                        Aggregation aggregation = request.getAggregation();
+                        if(aggregation != null){
+                            if(aggregation.getDurationPerBin() != null){
+                                int bins = (int) Duration.between(start, end).dividedBy(aggregation.getDurationPerBin());
+                                flux = flux.windowUntil(new DateRangeBinBoundaryTrigger(((DateRange) range), bins), true)
+                                        .flatMap(x -> x.collect(new BinMinMaxMeanCollector()));
+                            }
+                            else if(aggregation.getNrOfBins() > 0) {
+                                flux = flux.windowUntil(new DateRangeBinBoundaryTrigger((DateRange) request.getRange(), request.getAggregation().getNrOfBins()), true)
+                                        .flatMap(x -> x.collect(new BinMinMaxMeanCollector()));
+                            }
                         }
 
                         // Construct return datastructure

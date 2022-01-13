@@ -10,6 +10,12 @@ sshuttle -r sflca 172.26.120.117/24 172.26.40.28/24
 sshuttle -r hipa-daq-01 172.19.10.40/24
 ```
 
+A direct tunnel can be established like this:
+```bash
+ssh -L 17668:sf-archapp-05:17668 sf-archapp-05
+```
+
+
 Provide specific configuration:
 ```bash
 -Dspring.config.location=/tmp/application.properties

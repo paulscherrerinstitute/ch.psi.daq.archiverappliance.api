@@ -1,7 +1,9 @@
 package ch.psi.daq.archiverappliance.api.api.v1.query;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -15,11 +17,12 @@ import java.util.List;
  *       "nrOfBins":2
  *    }
  */
-@JsonIgnoreProperties
+@JsonDeserialize(using = AggregationDeserializer.class)
 public class Aggregation {
     private String aggregationType = "value"; // value (default) or index
     private List<String> aggregations;
     private int nrOfBins;
+    private Duration durationPerBin = null;
 
     public String getAggregationType() {
         return aggregationType;
@@ -43,5 +46,13 @@ public class Aggregation {
 
     public void setNrOfBins(int nrOfBins) {
         this.nrOfBins = nrOfBins;
+    }
+
+    public Duration getDurationPerBin() {
+        return durationPerBin;
+    }
+
+    public void setDurationPerBin(Duration durationPerBin) {
+        this.durationPerBin = durationPerBin;
     }
 }

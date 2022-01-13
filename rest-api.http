@@ -278,3 +278,17 @@ Content-Type: application/json
 
 
 ###
+
+POST {{host}}/query
+Content-Type: application/json
+
+{"response":{"format":"json"},"range": { "startSeconds" : "1641918710", "endSeconds" : "1642005110"},"channels": [ {"name":"SLAAR01-TLSY-EPL:JITTERMON", "backend" : "sf-archiverappliance" }],"fields":["channel","globalSeconds","value"], "aggregation": {"aggregationType":"value", "aggregations":["min","mean","max"], "durationPerBin" : "PT1S"}}
+
+###
+
+POST {{host}}/query
+Content-Type: application/json
+
+//{"response":{"format":"json"},"range": { "startSeconds" : "1641918710", "endSeconds" : "1642005110"},"channels": [ {"name":"SLAAR01-TLSY-EPL:JITTERMON", "backend" : "sf-archiverappliance" }],"fields":["channel","globalSeconds","value"]}
+//{"response":{"format":"json"},"range": { "startSeconds" : "1642066635", "endSeconds" : "1642070235"},"channels": [ {"name":"SINBC02-DDRM005:DOSE-OP" }],"fields":["channel","globalSeconds","value"], "aggregation": {"aggregationType":"value", "aggregations":["min","mean","max"], "durationPerBin" : "PT1S"}}
+{"response":{"format":"json"},"range": { "startSeconds" : "1642066635", "endSeconds" : "1642070235"},"channels": [ {"name":"SINBC02-DDRM005:DOSE-OP" }],"fields":["channel","globalSeconds","value"], "aggregation": {"aggregationType":"value", "aggregations":["min","mean","max"], "nrOfBins" : 500}}
