@@ -34,6 +34,7 @@ public class ArchiverQueryManager {
     public ArchiverQueryManager(@Value("${server.name}") String serverName, ObjectMapper objectMapper){
         this.queryUrl = "http://"+serverName+":17668/retrieval/data/getData.json?pv={pv}&from={start}&to={end}";
 
+        // TODO probably we should create a copy of the mapper here (.copy()) and then set the parameters
         // Allow NAN and Infinity (double) - The archiver appliance sends such non json things!
         objectMapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
         objectMapper.getFactory().enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());

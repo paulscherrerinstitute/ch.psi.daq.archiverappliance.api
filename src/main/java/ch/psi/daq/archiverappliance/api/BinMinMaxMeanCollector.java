@@ -37,10 +37,18 @@ public class BinMinMaxMeanCollector implements Collector<DataPoint, DataPoint, D
             double v = ((DataPointRawValue)value.getValue()).getValue();
             DataPointMinMaxMeanValue bufferValue = (DataPointMinMaxMeanValue) buffer.getValue();
 
-            if(buffer.getTimestamp().equals(Instant.EPOCH)){
+            if (! buffer.isInitialized()){
                 buffer.setTimestamp(value.getTimestamp());
+                bufferValue.setMin(v);
+                bufferValue.setMax(v);
+                buffer.setInitialized(true);
             }
-            else if(value.getTimestamp().isBefore(buffer.getTimestamp())){
+
+//            if(buffer.getTimestamp().equals(Instant.EPOCH)){
+//                buffer.setTimestamp(value.getTimestamp());
+//            }
+//            else
+            if(value.getTimestamp().isBefore(buffer.getTimestamp())){
                 buffer.setTimestamp(value.getTimestamp());
             }
 

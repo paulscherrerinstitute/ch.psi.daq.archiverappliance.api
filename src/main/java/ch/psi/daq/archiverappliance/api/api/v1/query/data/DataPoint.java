@@ -9,6 +9,8 @@ public class  DataPoint {
 
     @JsonIgnore
     private Instant timestamp;
+    @JsonIgnore
+    private boolean initialized = false;
 
 //    private long pulseId;
 //    private long globalMillis;
@@ -63,6 +65,14 @@ public class  DataPoint {
 
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
     @Override

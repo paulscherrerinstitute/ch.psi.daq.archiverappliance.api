@@ -7,6 +7,9 @@ import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResultEvent;
 import java.time.Instant;
 import java.util.function.Function;
 
+/**
+ * Mapper to map an ArchiverAppliance data point to a Data API datapoint
+ */
 public class DataPointRawValueMapper implements Function<ArchiverQueryResultEvent, DataPoint> {
 
     @Override

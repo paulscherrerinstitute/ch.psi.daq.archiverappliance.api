@@ -55,10 +55,14 @@ public class QueryController {
 
                         // Query the Archiver and map data to api data format
                         Flux<DataPoint> flux = archiverManager.queryStream(channelName, ((DateRange) range).getStartDate(), ((DateRange) range).getEndDate())
-                                .skip(1) // The archiver appliance does always return one data point before the actual range
+//                                .skip(1) // The archiver appliance does always return one data point before the actual range
                                 .filter(e -> !Double.isInfinite(e.getValue()))  // filter out infinite values
                                 .filter(e ->!Double.isNaN(e.getValue()))  // filter out NAN
-                                .map(new DataPointRawValueMapper());
+                                .map(new DataPointRawValueMapper())
+                                // ensure that datapoints are actually in the requested timerange
+                                .filter(e -> e.getTimestamp().isAfter(start)) // instead of skip(1)
+                                .filter(e -> e.getTimestamp().isBefore(end));
+
 
 
                         // Aggregate values if requested
@@ -74,6 +78,11 @@ public class QueryController {
                                         .flatMap(x -> x.collect(new BinMinMaxMeanCollector()));
                             }
                         }
+
+                        // TODO Workaround - somehow the first bin might be "empty" - i.e. timestamp 0
+                        // Ensure again that the bins are within arrange
+                        flux = flux.filter(e-> e.getTimestamp().isAfter(start))
+                                .filter(e-> e.getTimestamp().isBefore(end));
 
                         // Construct return datastructure
                         Mono<ChannelResult> mono = flux
