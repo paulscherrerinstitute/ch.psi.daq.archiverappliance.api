@@ -7,6 +7,7 @@ import ch.psi.daq.archiverappliance.api.data.ArchiverQueryResultMeta;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,10 @@ public class ArchiverQueryManager {
 
     public ArchiverQueryManager(@Value("${server.name}") String serverName, ObjectMapper objectMapper){
         this.queryUrl = "http://"+serverName+":17668/retrieval/data/getData.json?pv={pv}&from={start}&to={end}";
+
+        // Allow NAN and Infinity (double) - The archiver appliance sends such non json things!
+        objectMapper.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
+        objectMapper.getFactory().enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature());
 
         this.objectMapper = objectMapper;
     }

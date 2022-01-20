@@ -17,7 +17,8 @@ public class ArchiverQueryManagerTest {
     @Test
     public void query() {
         ArchiverQueryManager manager = new ArchiverQueryManager(
-                "sf-archapp-05.psi.ch",
+//                "sf-archapp-05.psi.ch",
+                "localhost",
                 Jackson2ObjectMapperBuilder.json().build());
 
         ArchiverQueryResult result = manager.query(
@@ -31,7 +32,8 @@ public class ArchiverQueryManagerTest {
     @Test
     public void queryStream() throws InterruptedException {
         ArchiverQueryManager manager = new ArchiverQueryManager(
-                "sf-archapp-05.psi.ch",
+//                "sf-archapp-05.psi.ch",
+                "localhost",
                 Jackson2ObjectMapperBuilder.json().build());
 
         Flux<ArchiverQueryResultEvent> result = manager.queryStream(
@@ -46,5 +48,20 @@ public class ArchiverQueryManagerTest {
         logger.info("FINISHED");
 
         Thread.sleep(10000);
+    }
+
+    @Test
+    public void queryChannelWithNAN() {
+        ArchiverQueryManager manager = new ArchiverQueryManager(
+//                "sf-archapp-05.psi.ch",
+                "localhost",
+                Jackson2ObjectMapperBuilder.json().build());
+
+        ArchiverQueryResult result = manager.query(
+                "SARUN:FELPHOTENE",
+                Instant.parse("2021-04-01T00:00:00.000Z"),
+                Instant.parse("2021-04-01T00:00:00.000Z"));
+
+        System.out.println(result.getMeta().getName());
     }
 }
