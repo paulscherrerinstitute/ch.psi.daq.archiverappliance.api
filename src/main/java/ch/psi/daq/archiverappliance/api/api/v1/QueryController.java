@@ -56,6 +56,8 @@ public class QueryController {
                         // Query the Archiver and map data to api data format
                         Flux<DataPoint> flux = archiverManager.queryStream(channelName, ((DateRange) range).getStartDate(), ((DateRange) range).getEndDate())
                                 .skip(1) // The archiver appliance does always return one data point before the actual range
+                                .filter(e -> !Double.isInfinite(e.getValue()))  // filter out infinite values
+                                .filter(e ->!Double.isNaN(e.getValue()))  // filter out NAN
                                 .map(new DataPointRawValueMapper());
 
 

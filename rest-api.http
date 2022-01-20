@@ -322,3 +322,10 @@ Content-Type: application/json
     "endDate": "2021-04-30T22:00:00.000000000Z"
   }
 }
+
+###
+
+POST {{host}}/query
+Content-Type: application/json
+
+{"channels":[{"name":"SIN-TIMAST-TMA:Bunch-1-Appl-RB","backend":"sf-archiverappliance"}],"range":{"startDate":"2021-03-31T22:00:00.000Z","endDate":"2021-04-30T22:00:00.000Z","startExpansion":false,"endExpansion":false},"eventFields":["globalMillis","value","eventCount"],"aggregation":{"aggregations":["min","mean","max"],"nrOfBins":500}}
