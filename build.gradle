@@ -13,7 +13,7 @@ compileJava {
 }
 
 group = 'ch.psi.daq'
-version = '0.0.15'
+version = '0.0.16'
 sourceCompatibility = '11'
 
 repositories {

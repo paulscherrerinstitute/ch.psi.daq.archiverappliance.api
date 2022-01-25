@@ -58,10 +58,13 @@ public class QueryController {
 //                                .skip(1) // The archiver appliance does always return one data point before the actual range
                                 .filter(e -> !Double.isInfinite(e.getValue()))  // filter out infinite values
                                 .filter(e ->!Double.isNaN(e.getValue()))  // filter out NAN
-                                .map(new DataPointRawValueMapper())
-                                // ensure that datapoints are actually in the requested timerange
-                                .filter(e -> e.getTimestamp().isAfter(start)) // instead of skip(1)
-                                .filter(e -> e.getTimestamp().isBefore(end));
+                                .map(new DataPointRawValueMapper());
+
+                        if(! range.isStartExpansion()) {
+                            // ensure that datapoints are actually in the requested timerange
+                            flux = flux.filter(e -> e.getTimestamp().isAfter(start)) // instead of skip(1)
+                                    .filter(e -> e.getTimestamp().isBefore(end));
+                        }
 
 
 
@@ -80,9 +83,14 @@ public class QueryController {
                         }
 
                         // TODO Workaround - somehow the first bin might be "empty" - i.e. timestamp 0
-                        // Ensure again that the bins are within arrange
-                        flux = flux.filter(e-> e.getTimestamp().isAfter(start))
-                                .filter(e-> e.getTimestamp().isBefore(end));
+                        if(range.isStartExpansion()) {
+                            flux = flux.filter(e -> e.getTimestamp().getEpochSecond() > 0);
+                        }
+                        else {
+                            // Ensure again that the bins are within arrange
+                            flux = flux.filter(e -> e.getTimestamp().isAfter(start))
+                                    .filter(e -> e.getTimestamp().isBefore(end));
+                        }
 
                         // Construct return datastructure
                         Mono<ChannelResult> mono = flux
