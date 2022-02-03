@@ -1,9 +1,11 @@
 package ch.psi.daq.archiverappliance.api.api.v1.query.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.Instant;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)  // only include non null values
 public class  DataPoint {
     private DataPointValue value;
 

@@ -1,5 +1,7 @@
 package ch.psi.daq.archiverappliance.api.api.v1.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * {
  *      "name":"CAM_CHANNEL",
@@ -12,6 +14,7 @@ package ch.psi.daq.archiverappliance.api.api.v1.config;
  *      "source":"tcp://CAM_SERVER:9999"
  * }
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)  // only include non null values
 public class ChannelConfiguration {
     private String name;
     private String type;

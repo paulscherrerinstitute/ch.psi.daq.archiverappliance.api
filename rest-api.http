@@ -91,6 +91,21 @@ Content-Type: application/json
 }
 
 ###
+# "regex": "S10CB09-RHLA-SRVLSW:SF-FW-SLAVE1-CLK-EXIST",
+# curl 'http://localhost:8080/channels/config' -X POST -H 'Content-Type: application/json' --data-raw '{"regex":"ist"}'
+POST {{host}}/channels/config
+Content-Type: application/json
+
+{
+  "regex": "EXIST"
+}
+
+
+###
+
+
+
+###
 
 POST {{host}}/channels/config
 Content-Type: application/json

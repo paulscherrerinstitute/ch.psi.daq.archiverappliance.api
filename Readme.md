@@ -12,7 +12,7 @@ sshuttle -r hipa-daq-01 172.19.10.40/24
 
 A direct tunnel can be established like this:
 ```bash
-ssh -L 17668:sf-archapp-05:17668 sf-archapp-05
+ssh -L 17668:localhost:17668 -L 17665:localhost:17665 sf-archapp-05.psi.ch
 ```
 
 
