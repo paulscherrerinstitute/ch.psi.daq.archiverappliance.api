@@ -17,7 +17,6 @@ public class DataPointRawValueMapper implements Function<ArchiverQueryResultEven
         DataPoint dataPoint = new DataPoint(Instant.ofEpochSecond(event.getSeconds(), event.getNanoseconds()));
         DataPointRawValue value = new DataPointRawValue();
         value.setValue(event.getValue());
-
         dataPoint.setValue(value);
         return dataPoint;
     }

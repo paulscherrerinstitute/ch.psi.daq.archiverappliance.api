@@ -1,24 +1,18 @@
 package ch.psi.daq.archiverappliance.api.api.v1.query.data;
 
-public class DataPointRawValue extends DataPointValue {
-    private double value;
+public class DataPointRawValue<T> extends DataPointValue {
 
-    public DataPointRawValue(){
-    }
+    private T value;
 
-    public DataPointRawValue(double value) {
-        this.value = value;
-    }
-
-    public double getValue() {
+    public T getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(T value) {
         this.value = value;
     }
 
-    // TODO remove - for testing purpose only
+    // For testing purpose only
     @Override
     public String toString() {
         return ""+value;

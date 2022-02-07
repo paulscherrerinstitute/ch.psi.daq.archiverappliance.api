@@ -6,13 +6,19 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-public class DataPointSerializer extends JsonSerializer {
+public class DataPointValueSerializer extends JsonSerializer {
 
     @Override
     public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 
         if(value instanceof DataPointRawValue) {
-            gen.writeNumber(((DataPointRawValue) value).getValue());
+            if (((DataPointRawValue<?>) value).getValue() != null) {
+                if (((DataPointRawValue<?>) value).getValue() instanceof Double) {
+                    gen.writeNumber(((DataPointRawValue<Double>) value).getValue());
+                } else {
+                    gen.writeString(((DataPointRawValue<?>) value).getValue().toString());
+                }
+            }
         }
         else if(value instanceof DataPointMinMaxMeanValue){
             gen.writeStartObject();

@@ -34,7 +34,7 @@ public class BinMinMaxMeanCollector implements Collector<DataPoint, DataPoint, D
     @Override
     public BiConsumer<DataPoint, DataPoint> accumulator() {
         return (buffer, value) ->{
-            double v = ((DataPointRawValue)value.getValue()).getValue();
+            double v = ((DataPointRawValue<Double>)value.getValue()).getValue();
             DataPointMinMaxMeanValue bufferValue = (DataPointMinMaxMeanValue) buffer.getValue();
 
             if (! buffer.isInitialized()){

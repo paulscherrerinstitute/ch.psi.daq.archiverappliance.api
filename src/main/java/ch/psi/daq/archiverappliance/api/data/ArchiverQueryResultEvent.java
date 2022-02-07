@@ -1,16 +1,15 @@
 package ch.psi.daq.archiverappliance.api.data;
 
+import ch.psi.daq.archiverappliance.api.api.v1.query.RangeDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonIgnoreProperties()
-public class ArchiverQueryResultEvent {
-   @JsonProperty("secs")
+@JsonDeserialize(using = ArchiverQueryResultEventDeserializer.class)
+public class ArchiverQueryResultEvent<T> {
    private long seconds;
-   @JsonProperty("nanos")
    private long nanoseconds;
-   @JsonProperty("val")
-   private double value;
+   private T value;
    private int severity;
    private int status;
 
@@ -30,11 +29,11 @@ public class ArchiverQueryResultEvent {
       this.nanoseconds = nanoseconds;
    }
 
-   public double getValue() {
+   public T getValue() {
       return value;
    }
 
-   public void setValue(double value) {
+   public void setValue(T value) {
       this.value = value;
    }
 

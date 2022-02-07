@@ -333,8 +333,8 @@ Content-Type: application/json
     "SARUN:FELPHOTENE"
   ],
   "range": {
-    "startDate": "2021-03-31T22:00:00.000000000Z",
-    "endDate": "2021-04-30T22:00:00.000000000Z"
+    "startDate": "2022-02-05T22:00:00.000000000Z",
+    "endDate": "2022-02-06T22:00:00.000000000Z"
   }
 }
 
@@ -344,3 +344,31 @@ POST {{host}}/query
 Content-Type: application/json
 
 {"channels":[{"name":"SIN-TIMAST-TMA:Bunch-1-Appl-RB","backend":"sf-archiverappliance"}],"range":{"startDate":"2021-03-31T22:00:00.000Z","endDate":"2021-04-30T22:00:00.000Z","startExpansion":false,"endExpansion":false},"eventFields":["globalMillis","value","eventCount"],"aggregation":{"aggregations":["min","mean","max"],"nrOfBins":500}}
+
+###
+
+# curl -X POST -H 'Content-Type: application/json' -d '{"channels":[{"name":"SINXB01-RILK:STR-DESC-CURRENT-LOG","backend":"sf-archiverappliance"}],"range":{"startDate":"2022-02-02T09:12:38.539Z","endDate":"2022-02-03T09:12:38.539Z","startExpansion":false,"endExpansion":false},"eventFields":["globalMillis","value"]}' https://data-api.psi.ch/sf-archiverappliance/query
+POST {{host}}/query
+Content-Type: application/json
+
+{
+  "channels": [
+    {
+      "name": "SINXB01-RILK:STR-DESC-CURRENT-LOG",
+      "backend": "sf-archiverappliance"
+    }
+  ],
+  "range": {
+    "startDate": "2022-01-25T09:12:38.539Z",
+    "endDate": "2022-02-03T09:12:38.539Z",
+    "startExpansion": false,
+    "endExpansion": false
+  },
+  "eventFields": [
+    "globalMillis",
+    "value"
+  ]
+}
+
+###
+

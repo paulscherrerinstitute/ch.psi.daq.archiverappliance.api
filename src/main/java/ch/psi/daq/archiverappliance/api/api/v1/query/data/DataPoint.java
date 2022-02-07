@@ -19,9 +19,9 @@ public class  DataPoint {
 //    private String globalSeconds;
 //    private String globalDate;
 
-    // TODO: Float64 UInt16
-    private String type = "Float64";
-    private int[] shape = new int[]{1};
+//    // TODO: Float64 UInt16
+//    private String type = "Float64";
+//    private int[] shape = new int[]{1};
 
     private int eventCount = 1;
 
@@ -73,21 +73,21 @@ public class  DataPoint {
         this.timestamp = timestamp;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public int[] getShape() {
-        return shape;
-    }
-
-    public void setShape(int[] shape) {
-        this.shape = shape;
-    }
+//    public String getType() {
+//        return type;
+//    }
+//
+//    public void setType(String type) {
+//        this.type = type;
+//    }
+//
+//    public int[] getShape() {
+//        return shape;
+//    }
+//
+//    public void setShape(int[] shape) {
+//        this.shape = shape;
+//    }
 
     public boolean isInitialized() {
         return initialized;
