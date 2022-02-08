@@ -69,6 +69,7 @@ public class QueryController {
 
 
 
+                        // TODO aggregation will only work for double values (not string or waveforms, etc.)
                         // Aggregate values if requested
                         Aggregation aggregation = request.getAggregation();
                         if(aggregation != null){

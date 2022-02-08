@@ -371,6 +371,7 @@ Content-Type: application/json
 }
 
 ###
+# Query a waveform
 
 POST {{host}}/query
 Content-Type: application/json

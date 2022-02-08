@@ -9,11 +9,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.util.ArrayList;
 
-enum Type {
-    DOUBLE, STRING, INTEGER
-}
+
 
 public class ArchiverQueryResultEventDeserializer extends JsonDeserializer {
+
+    enum Type {
+        DOUBLE, STRING, INTEGER
+    }
+
     @Override
     public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
         JsonNode node = p.getCodec().readTree(p);
@@ -57,6 +60,7 @@ public class ArchiverQueryResultEventDeserializer extends JsonDeserializer {
                 }
             }
             else {
+                // we convert int also to double so that min/max/mean aggregation will work without modifications
                 if (value.isTextual()) {
                     event.setValue(value.textValue());
                 } else {
