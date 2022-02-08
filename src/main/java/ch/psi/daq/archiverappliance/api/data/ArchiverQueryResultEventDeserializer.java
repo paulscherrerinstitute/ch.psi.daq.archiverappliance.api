@@ -7,6 +7,11 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
+enum Type {
+    DOUBLE, STRING, INTEGER
+}
 
 public class ArchiverQueryResultEventDeserializer extends JsonDeserializer {
     @Override
@@ -17,14 +22,49 @@ public class ArchiverQueryResultEventDeserializer extends JsonDeserializer {
 
         if(node.get("val") != null) {
             JsonNode value = node.get("val");
-            if(value.isTextual()){
-                event.setValue(value.textValue());
+            if(value.isArray()){
+                if(!value.isEmpty()) {
+                    // Determine type
+                    Type type = Type.DOUBLE;
+                    ArrayList<?> values = new ArrayList<Double>();
+                    if(value.get(0).isTextual()){
+                        type = Type.STRING;
+                        values = new ArrayList<String>();
+                    }
+                    else if (value.get(0).isInt()){
+                        type = Type.INTEGER;
+                        values = new ArrayList<Integer>();
+                    }
+
+                    for (JsonNode n : value) {
+                        switch (type){
+                            case DOUBLE:
+                                ((ArrayList<Double>) values).add(n.doubleValue());
+                                break;
+                            case STRING:
+                                ((ArrayList<String>) values).add(n.textValue());
+                                break;
+                            case INTEGER:
+                                ((ArrayList<Integer>) values).add(n.intValue());
+                                break;
+                        }
+                    }
+                    event.setValue(values);
+                }
+                else{
+                    // add empty list
+                    event.setValue(new ArrayList());
+                }
             }
-            else{
-                Double v = value.doubleValue();
-                // Ignore infinite and NaN values
-                if(!v.isInfinite() && !v.isNaN()) {
-                    event.setValue(value.doubleValue());
+            else {
+                if (value.isTextual()) {
+                    event.setValue(value.textValue());
+                } else {
+                    Double v = value.doubleValue();
+                    // Ignore infinite and NaN values
+                    if (!v.isInfinite() && !v.isNaN()) {
+                        event.setValue(value.doubleValue());
+                    }
                 }
             }
         }

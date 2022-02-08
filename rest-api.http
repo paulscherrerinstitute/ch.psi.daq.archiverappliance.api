@@ -372,3 +372,27 @@ Content-Type: application/json
 
 ###
 
+POST {{host}}/query
+Content-Type: application/json
+
+{
+  "channels": [
+    {
+      "name": "S10BC02-DSCR220:QUERY",
+      "backend": "sf-archiverappliance"
+    }
+  ],
+  "range": {
+    "startDate": "2021-12-31T09:12:38.539Z",
+    "endDate": "2022-02-07T09:12:38.539Z",
+    "startExpansion": false,
+    "endExpansion": false
+  },
+  "eventFields": [
+    "globalMillis",
+    "value"
+  ]
+}
+
+
+
