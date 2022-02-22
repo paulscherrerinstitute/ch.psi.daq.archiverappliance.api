@@ -77,7 +77,7 @@ public class ArchiverConfigurationManager {
      * @return  Flux of channel names
      */
     public Flux<String> getChannels(boolean reload) {
-        if (reload) {
+        if (reload || !Paths.get(fileNameChannelsCache).toFile().exists()) {
             fetchChannels().block();
         }
         Flux<String> channelsFlux;
@@ -87,6 +87,7 @@ public class ArchiverConfigurationManager {
             channelsFlux = Flux.fromStream(channels.stream());
         } catch (IOException e) {
             logger.error("Unable to read channel file");
+
             channelsFlux = Flux.fromStream(new ArrayList<String>().stream());
         }
 
